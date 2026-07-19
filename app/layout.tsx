@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import { Anton, Inter } from "next/font/google";
 import "./globals.css";
+import "./product-flip.css";
 
 const anton = Anton({ variable: "--font-display", subsets: ["latin"], weight: "400" });
 const inter = Inter({ variable: "--font-body", subsets: ["latin"] });

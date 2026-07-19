@@ -1,0 +1,86 @@
+.product { display: block; outline: none; }
+
+.flipScene {
+  position: relative;
+  height: 600px;
+  overflow: hidden;
+  perspective: 1400px;
+  background: radial-gradient(circle at 50% 42%, #2b1c35, #100c13 68%);
+}
+
+.flipCard {
+  position: absolute;
+  inset: 0;
+  transform-style: preserve-3d;
+  transition: transform .85s cubic-bezier(.2, .75, .2, 1);
+}
+
+.product:hover .flipCard,
+.product:focus-visible .flipCard,
+.product:active .flipCard { transform: rotateY(180deg); }
+
+.productFace {
+  position: absolute;
+  inset: 0;
+  display: grid;
+  place-items: center;
+  margin: 0;
+  backface-visibility: hidden;
+  -webkit-backface-visibility: hidden;
+}
+
+.productFace img {
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+  filter: drop-shadow(0 30px 35px #0008);
+  transition: transform .85s cubic-bezier(.2, .75, .2, 1);
+}
+
+.product:hover .productFace img,
+.product:focus-visible .productFace img { transform: scale(1.04); }
+
+.productBack { transform: rotateY(180deg); }
+
+.productFace figcaption {
+  position: absolute;
+  top: 18px;
+  left: 18px;
+  padding: 7px 9px;
+  border: 1px solid #ffffff40;
+  background: #050407aa;
+  color: var(--bone);
+  font-size: 8px;
+  font-weight: 900;
+  letter-spacing: .16em;
+  text-transform: uppercase;
+}
+
+.spinHint {
+  position: absolute;
+  right: 18px;
+  bottom: 18px;
+  z-index: 3;
+  display: flex;
+  align-items: center;
+  gap: 7px;
+  padding: 8px 10px;
+  background: var(--acid);
+  color: #08070a;
+  font-size: 8px;
+  font-weight: 900;
+  letter-spacing: .13em;
+  text-transform: uppercase;
+  pointer-events: none;
+}
+
+.spinHint i { font-size: 14px; font-style: normal; transition: transform .85s; }
+.product:hover .spinHint i,
+.product:focus-visible .spinHint i { transform: rotate(180deg); }
+.product:focus-visible .flipScene { box-shadow: inset 0 0 0 2px var(--acid); }
+
+@media (max-width: 850px) {
+  .flipScene { height: 68vh; min-height: 520px; }
+  .spinHint { right: 14px; bottom: 14px; }
+  .spinHint::after { content: " / hold"; }
+}

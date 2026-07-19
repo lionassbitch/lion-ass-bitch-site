@@ -1,7 +1,7 @@
 const products = [
-  { name: "Sacred Lion Crest Varsity", note: "The uniform", href: "https://www.lionassbitch.com/products/lab-sacred-lion-crest-varsity-jacket", focus: "32% center" },
-  { name: "Eddie Portrait Tee", note: "The icon", href: "https://www.lionassbitch.com/", focus: "68% center" },
-  { name: "LAB Monogram Tee", note: "The signal", href: "https://www.lionassbitch.com/products/lab-black-monogram-t-shirt", focus: "84% center" },
+  { name: "Orangecicle Lion Hoodie", note: "$56.12 · Unisex", href: "https://exsuvera-presents.myshopify.com/products/lion-lab-orangecicle-frayed-fleece-hoodie", front: "/products/hoodie-front.png", back: "/products/hoodie-back.png" },
+  { name: "Neon Crown Portrait Knit Tee", note: "$45.94 · Unisex", href: "https://exsuvera-presents.myshopify.com/products/lab-neon-crown-portrait-knit-tee", front: "/products/tee-front.png", back: "/products/tee-back.png" },
+  { name: "Denim Cat Eye Jacket", note: "$75.99 · Unisex", href: "https://exsuvera-presents.myshopify.com/products/denim-cat-eye-s-heavyweight-jacket", front: "/products/jacket-front.png", back: "/products/jacket-back.png" },
 ];
 
 export default function Home() {
@@ -10,7 +10,7 @@ export default function Home() {
       <header className="nav">
         <a className="wordmark" href="#top"><span>LAB</span><b>Lion Ass Bitch</b></a>
         <nav aria-label="Main navigation"><a href="#drop">Drop 01</a><a href="#world">The World</a><a href="#manifesto">Manifesto</a></nav>
-        <a className="bag" href="https://www.lionassbitch.com/collections/all">Shop all <span>↗</span></a>
+        <a className="bag" href="https://exsuvera-presents.myshopify.com/">Shop all <span>↗</span></a>
       </header>
 
       <section className="hero" id="top">
@@ -31,13 +31,19 @@ export default function Home() {
         <div className="sectionHead"><div><p className="eyebrow">New arrivals</p><h2>Drop<br/>01</h2></div><p>Three entry points. One living universe. Built to be worn, collected, and remembered.</p></div>
         <div className="productGrid">
           {products.map((product, index) => (
-            <a className="product" href={product.href} key={product.name} target="_blank" rel="noreferrer">
-              <div className="crop" style={{"--focus": product.focus} as React.CSSProperties}><img src="/assets/underground-boutique.png" alt="" /></div>
+            <a className="product" href={product.href} key={product.name} target="_blank" rel="noreferrer" aria-label={`View ${product.name} on Shopify. Hover to rotate from front to back.`}>
+              <div className="flipScene">
+                <div className="flipCard">
+                  <figure className="productFace productFront"><img src={product.front} alt={`${product.name}, front view`} /><figcaption>Front</figcaption></figure>
+                  <figure className="productFace productBack"><img src={product.back} alt={`${product.name}, back view`} /><figcaption>Back</figcaption></figure>
+                </div>
+                <span className="spinHint"><i>↻</i> Hover to flip</span>
+              </div>
               <div className="productMeta"><span>0{index + 1}</span><h3>{product.name}</h3><small>{product.note} ↗</small></div>
             </a>
           ))}
         </div>
-        <a className="textLink" href="https://www.lionassbitch.com/collections/all">View the full collection <span>→</span></a>
+        <a className="textLink" href="https://exsuvera-presents.myshopify.com/">View the full collection <span>→</span></a>
       </section>
 
       <section className="world" id="world">
@@ -51,8 +57,8 @@ export default function Home() {
         <div className="manifestoGrid"><p>Lion Ass Bitch is for the maximalist, the minimalist, the misfit, and the main character. No gatekeeping. No shrinking. No permission needed.</p><p>Made to order. Shipped worldwide.<br/>Designed in the LAB.</p></div>
       </section>
 
-      <section className="finalCta"><video autoPlay muted loop playsInline poster="/assets/crystal-city.png"><source src="/assets/artifact-03.mp4" type="video/mp4" /></video><div className="veil"/><div><p className="eyebrow">The gate is open</p><h2>Enter<br/>the LAB.</h2><a className="button light" href="https://www.lionassbitch.com/collections/all">Shop everything</a></div></section>
-      <footer><a className="wordmark" href="#top"><span>LAB</span><b>Lion Ass Bitch</b></a><p>Luxury with teeth. Myth with receipts.</p><div><a href="https://www.instagram.com/lionassbitch/">Instagram</a><a href="https://www.lionassbitch.com/">Shopify</a></div><small>© 2026 Lion Ass Bitch LLC</small></footer>
+      <section className="finalCta"><video autoPlay muted loop playsInline poster="/assets/crystal-city.png"><source src="/assets/artifact-03.mp4" type="video/mp4" /></video><div className="veil"/><div><p className="eyebrow">The gate is open</p><h2>Enter<br/>the LAB.</h2><a className="button light" href="https://exsuvera-presents.myshopify.com/">Shop everything</a></div></section>
+      <footer><a className="wordmark" href="#top"><span>LAB</span><b>Lion Ass Bitch</b></a><p>Luxury with teeth. Myth with receipts.</p><div><a href="https://www.instagram.com/lionassbitch/">Instagram</a><a href="https://exsuvera-presents.myshopify.com/">Shopify</a></div><small>© 2026 Lion Ass Bitch LLC</small></footer>
     </main>
   );
 }
