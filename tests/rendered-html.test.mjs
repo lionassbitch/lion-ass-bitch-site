@@ -1,11 +1,7 @@
 import assert from "node:assert/strict";
-import { access, readFile, readdir } from "node:fs/promises";
 import test from "node:test";
 
-const developmentPreviewMeta =
-  /<meta(?=[^>]*\bname=["']codex-preview["'])(?=[^>]*\bcontent=["']development["'])[^>]*>/i;
-const templateRoot = new URL("../", import.meta.url);
-const previewRoot = new URL("../app/_sites-preview/", import.meta.url);
+const shopDomain = "exsuvera-presents.myshopify.com";
 
 async function render() {
   const workerUrl = new URL("../dist/server/index.js", import.meta.url);
@@ -13,75 +9,59 @@ async function render() {
   const { default: worker } = await import(workerUrl.href);
 
   return worker.fetch(
-    new Request("http://localhost/", {
-      headers: { accept: "text/html" },
-    }),
-    {
-      ASSETS: {
-        fetch: async () => new Response("Not found", { status: 404 }),
-      },
-    },
-    {
-      waitUntil() {},
-      passThroughOnException() {},
-    },
+    new Request("http://localhost/", { headers: { accept: "text/html" } }),
+    { ASSETS: { fetch: async () => new Response("Not found", { status: 404 }) } },
+    { waitUntil() {}, passThroughOnException() {} },
   );
 }
 
-test("server-renders the starter loading skeleton", async () => {
-  const response = await render();
+async function publishedProducts() {
+  const response = await fetch(`https://${shopDomain}/products.json?limit=250`);
+  assert.equal(response.status, 200);
+  const payload = await response.json();
+  return payload.products;
+}
+
+const escapeRegex = (value) => value.replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
+
+test("server-renders every published Shopify product and mockup", async () => {
+  const [response, products] = await Promise.all([render(), publishedProducts()]);
   assert.equal(response.status, 200);
   assert.match(response.headers.get("content-type") ?? "", /^text\/html\b/i);
 
   const html = await response.text();
-  assert.match(html, developmentPreviewMeta);
-  assert.match(html, /<title>Your site is taking shape<\/title>/i);
-  assert.match(html, /Codex is working/);
-  assert.match(html, /Your site is taking shape/);
-  assert.match(html, /Codex is building the first version/);
-  assert.match(html, /react-loading-skeleton/);
-  assert.match(html, /role="status"/);
+  const visibleText = html.replace(/<!--.*?-->/gs, "");
+  assert.match(html, /<title>Lion Ass Bitch/);
+  assert.match(visibleText, new RegExp(`All live pieces \/ ${products.length} available`, "i"));
+
+  for (const product of products) {
+    assert.match(html, new RegExp(escapeRegex(product.title)));
+    for (const image of product.images) {
+      assert.match(html, new RegExp(escapeRegex(image.src)));
+    }
+  }
 });
 
-test("keeps the loading skeleton scoped and disposable", async () => {
-  const [preview, css, page, layout, packageJson, files] = await Promise.all([
-    readFile(new URL("SkeletonPreview.tsx", previewRoot), "utf8"),
-    readFile(new URL("preview.css", previewRoot), "utf8"),
-    readFile(new URL("../app/page.tsx", import.meta.url), "utf8"),
-    readFile(new URL("../app/layout.tsx", import.meta.url), "utf8"),
-    readFile(new URL("../package.json", import.meta.url), "utf8"),
-    readdir(previewRoot),
-  ]);
+test("uses Shopify-only direct cart forms with every available variant", async () => {
+  const [response, products] = await Promise.all([render(), publishedProducts()]);
+  const html = await response.text();
+  const productCards = html.match(/class="product(?:\s|")/g) ?? [];
+  const cartForms = html.match(/action="https:\/\/exsuvera-presents\.myshopify\.com\/cart\/add"/g) ?? [];
+  const renderedMockups = html.match(/class="productMockup"/g) ?? [];
+  const expectedImageCount = products.reduce((total, product) => total + product.images.length, 0);
 
-  assert.deepEqual(files.sort(), ["SkeletonPreview.tsx", "preview.css"]);
-  assert.match(preview, /from "react-loading-skeleton"/);
-  assert.match(preview, /baseColor="#eceae7"/);
-  assert.match(preview, /highlightColor="#f9f8f6"/);
-  assert.match(preview, /duration=\{2\.8\}/);
-  assert.match(preview, /sites-skeleton-search-placeholder/);
-  assert.match(packageJson, /"react-loading-skeleton": "3\.5\.0"/);
+  assert.equal(productCards.length, products.length);
+  assert.equal(cartForms.length, products.length);
+  assert.equal(renderedMockups.length, expectedImageCount);
+  assert.match(html, /name="return_to" value="\/cart"/);
+  assert.match(html, /Add to Shopify cart/);
+  assert.doesNotMatch(html, new RegExp(`href="https://${shopDomain}/products/`));
 
-  const shellIndex = preview.indexOf('className="sites-skeleton-shell"');
-  const statusIndex = preview.indexOf('className="sites-skeleton-status"');
-  assert.ok(shellIndex >= 0 && statusIndex > shellIndex);
-  assert.match(css, /position:\s*fixed/);
-  assert.match(css, /inset:\s*0/);
-  assert.match(css, /opacity:\s*0\.52/);
-  assert.match(css, /prefers-reduced-motion:\s*reduce/);
-  assert.doesNotMatch(css, /#020617|canvas|pets|progress/i);
-  assert.doesNotMatch(
-    preview,
-    /loading-spinner|status-mark|status-progress|canvas|cookie|random/i,
-  );
+  for (const product of products) {
+    for (const variant of product.variants.filter((item) => item.available)) {
+      assert.match(html, new RegExp(`value="${variant.id}"`));
+    }
+  }
 
-  assert.match(page, /export const metadata:\s*Metadata/);
-  assert.match(page, /"codex-preview": "development"/);
-  assert.match(page, /<SkeletonPreview \/>/);
-  assert.match(layout, /title:\s*"Starter Project"/);
-  assert.doesNotMatch(layout, /codex-preview|_sites-preview|themeColor|\bViewport\b/);
-  assert.doesNotMatch(css, /(^|\s)(html|body)\s*\{/m);
-
-  await assert.rejects(
-    access(new URL("public/_sites-preview", templateRoot)),
-  );
+  assert.doesNotMatch(html, /codex-preview|Your site is taking shape|Ã‚|Ã¢â€ /);
 });
