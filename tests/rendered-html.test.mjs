@@ -65,3 +65,22 @@ test("uses Shopify-only direct cart forms with every available variant", async (
 
   assert.doesNotMatch(html, /codex-preview|Your site is taking shape|Ã‚|Ã¢â€ /);
 });
+
+test("renders the Voguejitsu discipline as a complete, accessible route", async () => {
+  const workerUrl = new URL("../dist/server/index.js", import.meta.url);
+  workerUrl.searchParams.set("voguejitsu", `${process.pid}-${Date.now()}`);
+  const { default: worker } = await import(workerUrl.href);
+  const response = await worker.fetch(
+    new Request("http://localhost/voguejitsu", { headers: { accept: "text/html" } }),
+    { ASSETS: { fetch: async () => new Response("Not found", { status: 404 }) } },
+    { waitUntil() {}, passThroughOnException() {} },
+  );
+
+  assert.equal(response.status, 200);
+  const html = await response.text();
+  assert.match(html, /Voguejitsu — Presence Is Power/);
+  assert.match(html, /The five movement foundations/i);
+  assert.match(html, /Legendary Guardian/);
+  assert.match(html, /I leave the floor more powerful than I entered it/);
+  assert.match(html, /aria-label="Voguejitsu navigation"/);
+});

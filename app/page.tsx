@@ -104,7 +104,7 @@ export default async function Home() {
     <main>
       <header className="nav">
         <a className="wordmark" href="#top"><span>LAB</span><b>Lion Ass Bitch</b></a>
-        <nav aria-label="Main navigation"><a href="#drop">Shop all</a><a href="#world">The World</a><a href="#manifesto">Manifesto</a></nav>
+        <nav aria-label="Main navigation"><a href="#drop">Shop all</a><a href="#world">The World</a><a href="#manifesto">Manifesto</a><a href="/voguejitsu">Voguejitsu</a></nav>
         <a className="bag" href={`https://${SHOP_DOMAIN}/cart`}>Shopify cart <span>↗</span></a>
       </header>
 
