@@ -20,6 +20,70 @@ h1 i,
 .button.light:hover { background: var(--signal); }
 .marquee { background: var(--signal); }
 
+.heroCopy { max-width: 54vw; }
+.hero h1 { font-size: clamp(5.5rem, 10.5vw, 11rem); }
+
+.heroProduct {
+  position: absolute;
+  z-index: 1;
+  top: 9%;
+  right: 1.5vw;
+  width: min(49vw, 810px);
+  height: 82%;
+  margin: 0;
+  display: grid;
+  place-items: center;
+  pointer-events: none;
+}
+
+.heroProduct::before,
+.heroProduct::after {
+  position: absolute;
+  z-index: -1;
+  right: 4%;
+  left: 4%;
+  height: 15%;
+  border: 3px solid var(--signal);
+  border-radius: 50%;
+  box-shadow: 0 0 26px #ff2cabaa, inset 0 0 20px #ff2cab55;
+  content: "";
+}
+
+.heroProduct::before { top: 7%; border-right-color: var(--gold); }
+.heroProduct::after { bottom: 5%; border-left-color: var(--cyan); }
+
+.heroProduct img {
+  width: 100%;
+  max-height: 82%;
+  object-fit: contain;
+  filter: drop-shadow(-18px 0 24px #ff2cab60) drop-shadow(16px 2px 22px #d6a64a55) drop-shadow(0 25px 28px #000);
+  animation: hero-garment-float 5s ease-in-out infinite;
+}
+
+.heroProduct figcaption {
+  position: absolute;
+  right: 7%;
+  bottom: 1%;
+  max-width: 460px;
+  padding: 11px 14px;
+  border: 1px solid #d6a64a88;
+  background: #050306d9;
+  color: var(--bone);
+  font-size: 10px;
+  font-weight: 900;
+  line-height: 1.45;
+  letter-spacing: .12em;
+  text-align: right;
+  text-transform: uppercase;
+}
+
+.heroProduct figcaption span { display: block; color: var(--signal); font-size: 8px; letter-spacing: .2em; }
+
+@keyframes hero-garment-float {
+  0%, 100% { transform: translateY(0) rotate(-1deg); }
+  50% { transform: translateY(-14px) rotate(1deg); }
+}
+
 .warningBanner {
   margin: 0;
   padding: 5vw 4vw;
@@ -75,6 +139,11 @@ h1 i,
 .finalCta .veil { background: linear-gradient(#05030655, #050306d9); }
 
 @media (max-width: 850px) {
+  .hero { min-height: 1040px; padding-top: 540px; }
+  .heroCopy { max-width: 100%; }
+  .hero h1 { font-size: clamp(5.2rem, 17vw, 9rem); }
+  .heroProduct { top: 92px; right: 5vw; width: 90vw; height: 470px; }
+  .heroProduct figcaption { right: 3%; }
   .trinity { grid-template-columns: 1fr; }
   .trinity article { min-height: 620px; }
   .streetFilm { grid-template-columns: 1fr; }
@@ -82,6 +151,9 @@ h1 i,
 }
 
 @media (max-width: 520px) {
+  .hero { min-height: 980px; padding-top: 480px; }
+  .heroProduct { top: 70px; right: 1vw; width: 98vw; height: 420px; }
+  .heroProduct figcaption { right: 5%; left: 5%; text-align: left; }
   .warningBanner { padding: 48px 0; }
   .trinity article { min-height: 520px; }
 }

@@ -111,6 +111,10 @@ export default async function Home() {
       <section className="hero" id="top">
         <video autoPlay muted loop playsInline poster="/assets/lab-trinity-neon.webp"><source src="/assets/lab-trinity-loop.mp4" type="video/mp4" /></video>
         <div className="veil" />
+        <figure className="heroProduct">
+          <img src="/products/hero-ancestors-crest-hoodie-cutout.png" alt="LAB Ancestors Crest Boxy Zip Hoodie, Edition 03" />
+          <figcaption><span>Live catalog piece</span>Ancestors Crest Boxy Zip Hoodie · Edition 03</figcaption>
+        </figure>
         <div className="heroCopy">
           <p className="eyebrow">The current inventory / The gate is open</p>
           <h1>Turned a diss<br/><i>into dominion.</i></h1>

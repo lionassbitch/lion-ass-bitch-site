@@ -9,6 +9,7 @@ from PIL import Image, ImageChops, ImageDraw, ImageEnhance, ImageFilter, ImageFo
 
 ROOT = Path(__file__).resolve().parents[1]
 PRODUCT = ROOT / "public" / "products" / "hero-ancestors-crest-hoodie.png"
+CUTOUT = ROOT / "public" / "products" / "hero-ancestors-crest-hoodie-cutout.png"
 OUTPUT = ROOT / "public" / "og-dominion.png"
 
 W, H = 1744, 910
@@ -131,6 +132,7 @@ def build() -> None:
 
     # Exact Shopify product image; only its white studio background is removed.
     product = remove_white_background(Image.open(PRODUCT))
+    product.save(CUTOUT)
     scale = min(790 / product.height, 880 / product.width)
     product = product.resize((int(product.width * scale), int(product.height * scale)), Image.Resampling.LANCZOS)
     product = ImageEnhance.Contrast(product).enhance(1.05)
