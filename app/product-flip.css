@@ -5,99 +5,82 @@
 }
 
 .productStage {
-  --tilt-x: 0deg;
-  --tilt-y: 0deg;
   position: relative;
   height: 520px;
   overflow: hidden;
-  perspective: 1400px;
-  background:
-    radial-gradient(circle at 50% 42%, color-mix(in srgb, var(--signal) 22%, transparent), transparent 27%),
-    radial-gradient(circle at 50% 45%, #372042, #0b080d 70%);
   isolation: isolate;
-  cursor: grab;
+  outline: none;
   touch-action: pan-y;
+  user-select: none;
 }
-
-.productStage.isDragging { cursor: grabbing; }
-.productStage:focus-visible { outline: 2px solid var(--signal); outline-offset: 3px; }
 
 .productStage::before {
   position: absolute;
-  inset: -35%;
-  z-index: 4;
-  background: linear-gradient(112deg, transparent 40%, #ffffff20 48%, #d6a64a2d 51%, transparent 60%);
-  content: "";
-  opacity: 0;
-  pointer-events: none;
-  transform: translateX(-25%) rotate(7deg);
-  transition: opacity .25s, transform .8s;
-}
-
-.productStage:hover::before { opacity: 1; transform: translateX(25%) rotate(7deg); }
-.productStage.isDragging::before { opacity: .8; transform: translateX(12%) rotate(7deg); }
-
-.orbitRing {
-  position: absolute;
-  top: 16%;
-  left: 14%;
-  width: 72%;
-  aspect-ratio: 1;
-  border: 1px solid #d6a64a45;
+  left: 15%;
+  right: 15%;
+  bottom: 5%;
+  height: 10%;
+  z-index: -1;
   border-radius: 50%;
-  box-shadow: 0 0 45px #ff2cab30, inset 0 0 45px #772cff22;
-  transform: rotateX(67deg) rotateZ(-12deg);
-  animation: orbit 12s linear infinite;
+  background: radial-gradient(ellipse, #000c 0%, #ff2cab1a 42%, transparent 72%);
+  filter: blur(10px);
+  content: "";
 }
 
-.tiltRig {
+.productStage::after {
   position: absolute;
-  inset: 0;
-  z-index: 2;
-  transform: rotateX(var(--tilt-x)) rotateY(var(--tilt-y));
-  transform-style: preserve-3d;
-  transition: transform .16s ease-out;
+  top: 8%;
+  bottom: 8%;
+  left: 50%;
+  width: 1px;
+  z-index: -1;
+  background: linear-gradient(transparent, #d6a64a45, transparent);
+  content: "";
+  opacity: .45;
 }
 
-.turntable {
-  position: absolute;
-  inset: 0;
-  transform-style: preserve-3d;
-  transition: transform .9s cubic-bezier(.16, .82, .18, 1);
-  animation: hoverPiece 4.6s ease-in-out infinite;
-  animation-delay: var(--float-delay, 0s);
-}
-
-.hasSpin:hover .turntable,
-.hasSpin:focus-within .turntable { transform: rotateY(180deg) translateY(-8px); }
-
-.spinFace {
+.garmentMedia,
+.garmentModelHost {
   position: absolute;
   inset: 0;
   display: grid;
   place-items: center;
   margin: 0;
-  backface-visibility: hidden;
-  -webkit-backface-visibility: hidden;
 }
 
-.spinFace img {
-  width: 94%;
-  height: 94%;
+.garmentMedia {
+  animation: garmentArrival .3s cubic-bezier(.2, .75, .2, 1) both;
+}
+
+.garmentMedia img {
+  width: 96%;
+  height: 96%;
   object-fit: contain;
-  filter: drop-shadow(0 35px 28px #000a) drop-shadow(0 0 20px #ff2cab18);
+  pointer-events: none;
+  -webkit-user-drag: none;
+  filter: drop-shadow(0 32px 28px #000a) drop-shadow(0 0 18px #ff2cab16);
+  transform: translateY(-1%);
 }
 
-.spinBack { transform: rotateY(180deg); }
+.garmentModelHost,
+.garmentModel {
+  width: 100%;
+  height: 100%;
+  background: transparent;
+}
+
+.hasFrames { cursor: ew-resize; }
+.hasFrames[data-dragging="true"] { cursor: grabbing; }
+.hasModel { cursor: grab; }
 
 .spinHint {
   position: absolute;
-  right: 16px;
-  bottom: 16px;
+  right: 0;
+  bottom: 10px;
   z-index: 5;
-  padding: 9px 11px;
-  background: var(--signal);
-  color: #08070a;
+  padding: 8px 0 8px 12px;
+  border-left: 1px solid var(--signal);
+  color: var(--signal);
   font-size: 8px;
   font-weight: 900;
   letter-spacing: .13em;
@@ -108,7 +91,8 @@
 .mockupStrip {
   display: grid;
   grid-auto-flow: column;
-  grid-auto-columns: 72px;
+  grid-auto-columns: 66px;
+  justify-content: start;
   gap: 8px;
   overflow-x: auto;
   padding: 10px 0 4px;
@@ -118,22 +102,20 @@
 
 .mockupThumb {
   position: relative;
-  width: 72px;
-  height: 72px;
+  width: 66px;
+  height: 66px;
   overflow: hidden;
-  border: 1px solid #ffffff2c;
+  border: 0;
+  border-bottom: 1px solid #ffffff2c;
   border-radius: 0;
   padding: 0;
-  background: #100c13;
+  background: transparent;
   cursor: pointer;
 }
 
-.mockupThumb[aria-pressed="true"] { border-color: var(--signal); box-shadow: inset 0 0 0 1px var(--signal); }
+.mockupThumb[aria-pressed="true"] { border-color: var(--signal); }
 .mockupThumb img { width: 100%; height: 100%; object-fit: contain; }
-.mockupThumb span { position: absolute; right: 3px; bottom: 2px; color: var(--bone); font-size: 7px; font-weight: 900; text-shadow: 0 1px 4px #000; }
-
-.product:hover .mockupThumb img,
-.product:hover .spinFace img { transform: none; }
+.mockupThumb span { position: absolute; right: 2px; bottom: 1px; color: var(--bone); font-size: 7px; font-weight: 900; text-shadow: 0 1px 4px #000; }
 
 .productMeta { gap: 10px; padding-bottom: 0; border-bottom: 0; }
 
@@ -175,27 +157,27 @@
 .shopifyCartButton:focus-visible { background: var(--gold); }
 .shopifyCartButton:disabled { cursor: not-allowed; opacity: .55; }
 
+.productStage:focus-visible,
 .mockupThumb:focus-visible,
 .shopifyCartForm select:focus-visible,
 .shopifyCartButton:focus-visible { outline: 2px solid var(--signal); outline-offset: 2px; }
 
-@keyframes orbit { to { rotate: 360deg; } }
-@keyframes hoverPiece { 0%, 100% { translate: 0 -5px; } 50% { translate: 0 8px; } }
+@keyframes garmentArrival {
+  from { opacity: 0; transform: translateX(4%) scale(.985); }
+  to { opacity: 1; transform: none; }
+}
 
 @media (prefers-reduced-motion: reduce) {
-  .orbitRing,
-  .turntable { animation: none; }
-  .tiltRig,
-  .turntable,
-  .productStage::before { transition: none; }
+  .garmentMedia { animation: none; }
 }
 
 @media (max-width: 850px) {
   .productStage { height: 68vh; min-height: 520px; }
-  .spinHint { right: 12px; bottom: 12px; }
+  .spinHint { right: 0; bottom: 8px; }
 }
 
 @media (max-width: 520px) {
+  .productStage { min-height: 470px; }
   .shopifyCartForm { grid-template-columns: 1fr; }
   .shopifyCartForm label { grid-column: auto; }
   .shopifyCartForm select,

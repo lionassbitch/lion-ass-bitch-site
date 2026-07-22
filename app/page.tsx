@@ -27,6 +27,7 @@ type ShopifyProduct = {
 };
 
 type ProductCard = {
+  handle: string;
   id: number;
   name: string;
   note: string;
@@ -50,6 +51,7 @@ function toProductCard(product: ShopifyProduct): ProductCard | null {
   const hasPriceRange = new Set(prices).size > 1;
 
   return {
+    handle: product.handle,
     id: product.id,
     name: product.title,
     note: minimumPrice === null ? "View price" : `${hasPriceRange ? "From " : ""}${money.format(minimumPrice)}`,
@@ -111,21 +113,21 @@ export default async function Home() {
         <div className="veil" />
         <div className="heroCopy">
           <p className="eyebrow">The current inventory / The gate is open</p>
-          <h1>A diss built<br/><i>a dynasty.</i></h1>
-          <p className="intro">Turned the slur into the signal. Lion Ass Bitch is Bronx-born fashion, art, and attitude for anyone who refuses to shrink.</p>
+          <h1>Turned a diss<br/><i>into dominion.</i></h1>
+          <p className="intro">They named the insult. We claimed the power. Lion Ass Bitch is Bronx-born fashion, art, and attitude for anyone who refuses to shrink.</p>
           <div className="actions"><a className="button light" href="#drop">Shop all live pieces</a><a className="button ghost" href="#world">Enter the world</a></div>
         </div>
         <p className="sideNote">Luxury with teeth · New York · Est. 2022</p>
       </section>
 
-      <section className="marquee" aria-label="Brand values"><div>A DISS BUILT A DYNASTY <span>✦</span> TURNED THE SLUR INTO THE SIGNAL <span>✦</span> FUCK FAKE <span>✦</span> A DISS BUILT A DYNASTY <span>✦</span></div></section>
+      <section className="marquee" aria-label="Brand values"><div>TURNED A DISS INTO DOMINION <span>✦</span> THEY NAMED THE INSULT. WE CLAIMED THE POWER. <span>✦</span> FUCK FAKE <span>✦</span> TURNED A DISS INTO DOMINION <span>✦</span></div></section>
 
       <figure className="warningBanner">
         <img src="/assets/lab-warning-banner.webp" alt="Fuck fake. This is not a brand. This is a warning." />
       </figure>
 
       <section className="drop" id="drop">
-        <div className="sectionHead"><div><p className="eyebrow">All live pieces / {products.length} available</p><h2>Current<br/>inventory</h2></div><p>Every storefront-ready piece and every Shopify mockup in one living universe. Choose your exact option, then add it straight to the Shopify cart.</p></div>
+        <div className="sectionHead"><div><p className="eyebrow">All live pieces / {products.length} available</p><h2>Current<br/>inventory</h2></div><p>Every storefront-ready piece in one living universe. Drag the garment itself to inspect every available angle, choose your exact option, then add it straight to the Shopify cart.</p></div>
         <div className="productGrid">
           {products.map((product, index) => <ProductCard {...product} index={index} shopDomain={SHOP_DOMAIN} key={product.id} />)}
         </div>
@@ -134,7 +136,7 @@ export default async function Home() {
 
       <section className="world" id="world">
         <img src="/assets/lab-trinity-neon.webp" alt="Pryde, Kickz, and Khemetz walking through a neon Bronx alley" />
-        <div className="worldCopy"><p className="eyebrow">Not a label. A signal.</p><h2>Turned the slur<br/>into <i>the signal.</i></h2><p>A diss became a dynasty. Three archetypes carry the warning from the Bronx into every piece: sovereign will, stubborn truth, and sacred reckoning.</p><a className="button light" href="#drop">Wear the warning</a></div>
+        <div className="worldCopy"><p className="eyebrow">Not a label. A signal.</p><h2>Turned a diss<br/>into <i>dominion.</i></h2><p>They named the insult. We claimed the power. Three archetypes carry the warning from the Bronx into every piece: sovereign will, stubborn truth, and sacred reckoning.</p><a className="button light" href="#drop">Wear the warning</a></div>
       </section>
 
       <section className="trinity" aria-labelledby="trinity-title">
@@ -157,7 +159,7 @@ export default async function Home() {
       </section>
 
       <section className="finalCta"><video autoPlay muted loop playsInline poster="/assets/lab-trinity-neon.webp"><source src="/assets/lab-trinity-loop.mp4" type="video/mp4" /></video><div className="veil"/><div><p className="eyebrow">This is not a brand</p><h2>This is<br/>a warning.</h2><a className="button light" href={`https://${SHOP_DOMAIN}/cart`}>View Shopify cart</a></div></section>
-      <footer><a className="wordmark" href="#top"><span>LAB</span><b>Lion Ass Bitch</b></a><p>A diss built a dynasty.</p><div><a href="https://www.instagram.com/lionassbitch/">Instagram</a><a href={`https://${SHOP_DOMAIN}/cart`}>Shopify cart</a></div><small>© 2026 Lion Ass Bitch LLC</small></footer>
+      <footer><a className="wordmark" href="#top"><span>LAB</span><b>Lion Ass Bitch</b></a><p>Turned a diss into dominion.</p><div><a href="https://www.instagram.com/lionassbitch/">Instagram</a><a href={`https://${SHOP_DOMAIN}/cart`}>Shopify cart</a></div><small>© 2026 Lion Ass Bitch LLC</small></footer>
     </main>
   );
 }

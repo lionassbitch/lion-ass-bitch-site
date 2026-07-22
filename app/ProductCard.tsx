@@ -1,6 +1,7 @@
 "use client";
 
-import { useRef, useState, type CSSProperties, type KeyboardEvent, type PointerEvent } from "react";
+import { useEffect, useRef, useState, type KeyboardEvent, type PointerEvent } from "react";
+import { findGarmentModel } from "./garment-models";
 
 type ProductImage = {
   src: string;
@@ -17,6 +18,7 @@ type ProductVariant = {
 };
 
 type ProductCardProps = {
+  handle: string;
   id: number;
   index: number;
   images: ProductImage[];
@@ -26,88 +28,160 @@ type ProductCardProps = {
   variants: ProductVariant[];
 };
 
+type ModelViewerElement = HTMLElement & {
+  cameraOrbit?: string;
+};
+
 const money = new Intl.NumberFormat("en-US", { style: "currency", currency: "USD" });
 
-export default function ProductCard({ id, index, images, name, note, shopDomain, variants }: ProductCardProps) {
+function normalizeFrame(frame: number, length: number) {
+  return ((frame % length) + length) % length;
+}
+
+function GlbGarment({ name, poster, src }: { name: string; poster: string; src: string }) {
+  const hostRef = useRef<HTMLDivElement>(null);
+
+  useEffect(() => {
+    let cancelled = false;
+    const host = hostRef.current;
+
+    void import("@google/model-viewer").then(() => {
+      if (cancelled || !host) return;
+
+      const viewer = document.createElement("model-viewer") as ModelViewerElement;
+      viewer.setAttribute("src", src);
+      viewer.setAttribute("poster", poster);
+      viewer.setAttribute("alt", `${name}, interactive 360 degree garment model`);
+      viewer.setAttribute("camera-controls", "");
+      viewer.setAttribute("auto-rotate", "");
+      viewer.setAttribute("auto-rotate-delay", "0");
+      viewer.setAttribute("rotation-per-second", "18deg");
+      viewer.setAttribute("interaction-prompt", "none");
+      viewer.setAttribute("shadow-intensity", "0");
+      viewer.setAttribute("environment-image", "neutral");
+      viewer.setAttribute("exposure", "1.05");
+      viewer.setAttribute("touch-action", "pan-y");
+      viewer.className = "garmentModel";
+      host.replaceChildren(viewer);
+    });
+
+    return () => {
+      cancelled = true;
+      host?.replaceChildren();
+    };
+  }, [name, poster, src]);
+
+  return <div className="garmentModelHost" ref={hostRef} />;
+}
+
+export default function ProductCard({ handle, id, index, images, name, note, shopDomain, variants }: ProductCardProps) {
   const [activeImage, setActiveImage] = useState(0);
-  const [isDragging, setIsDragging] = useState(false);
-  const dragX = useRef(0);
+  const [hovering, setHovering] = useState(false);
+  const dragStart = useRef<{ frame: number; x: number } | null>(null);
+  const modelSrc = findGarmentModel(handle, name);
   const availableVariants = variants.filter((variant) => variant.available);
-  const nextImage = images.length > 1 ? (activeImage + 1) % images.length : activeImage;
-  const front = images[activeImage];
-  const back = images[nextImage];
+  const activeFrame = images[activeImage] ?? images[0];
 
-  const handleTilt = (event: PointerEvent<HTMLDivElement>) => {
-    if (event.pointerType !== "touch") {
-      const bounds = event.currentTarget.getBoundingClientRect();
-      const x = (event.clientX - bounds.left) / bounds.width;
-      const y = (event.clientY - bounds.top) / bounds.height;
-      event.currentTarget.style.setProperty("--tilt-x", `${(0.5 - y) * 9}deg`);
-      event.currentTarget.style.setProperty("--tilt-y", `${(x - 0.5) * 12}deg`);
-    }
+  useEffect(() => {
+    if (modelSrc || !hovering || images.length < 2) return;
+    if (window.matchMedia("(prefers-reduced-motion: reduce)").matches) return;
 
-    if (!isDragging || images.length < 2) return;
-    const distance = event.clientX - dragX.current;
-    if (Math.abs(distance) < 34) return;
-    setActiveImage((current) => (current + (distance > 0 ? 1 : -1) + images.length) % images.length);
-    dragX.current = event.clientX;
-  };
+    const interval = window.setInterval(() => {
+      setActiveImage((current) => normalizeFrame(current + 1, images.length));
+    }, images.length > 4 ? 520 : 1250);
 
-  const startSpin = (event: PointerEvent<HTMLDivElement>) => {
+    return () => window.clearInterval(interval);
+  }, [hovering, images.length, modelSrc]);
+
+  const stepFrame = (delta: number) => {
     if (images.length < 2) return;
-    dragX.current = event.clientX;
-    setIsDragging(true);
+    setActiveImage((current) => normalizeFrame(current + delta, images.length));
+  };
+
+  const startDrag = (event: PointerEvent<HTMLDivElement>) => {
+    if (modelSrc || images.length < 2) return;
     event.currentTarget.setPointerCapture(event.pointerId);
+    dragStart.current = { frame: activeImage, x: event.clientX };
+    event.currentTarget.dataset.dragging = "true";
   };
 
-  const stopSpin = (event: PointerEvent<HTMLDivElement>) => {
-    if (event.currentTarget.hasPointerCapture(event.pointerId)) event.currentTarget.releasePointerCapture(event.pointerId);
-    setIsDragging(false);
+  const dragGarment = (event: PointerEvent<HTMLDivElement>) => {
+    if (!dragStart.current || modelSrc || images.length < 2) return;
+    const bounds = event.currentTarget.getBoundingClientRect();
+    const frameWidth = Math.max(34, bounds.width / Math.max(images.length * 1.5, 5));
+    const frameDelta = Math.round((dragStart.current.x - event.clientX) / frameWidth);
+    setActiveImage(normalizeFrame(dragStart.current.frame + frameDelta, images.length));
   };
 
-  const handleSpinKeys = (event: KeyboardEvent<HTMLDivElement>) => {
-    if (images.length < 2 || !["ArrowLeft", "ArrowRight"].includes(event.key)) return;
-    event.preventDefault();
-    setActiveImage((current) => (current + (event.key === "ArrowRight" ? 1 : -1) + images.length) % images.length);
+  const endDrag = (event: PointerEvent<HTMLDivElement>) => {
+    dragStart.current = null;
+    delete event.currentTarget.dataset.dragging;
+    if (event.currentTarget.hasPointerCapture(event.pointerId)) {
+      event.currentTarget.releasePointerCapture(event.pointerId);
+    }
   };
 
-  const resetTilt = (event: PointerEvent<HTMLDivElement>) => {
-    event.currentTarget.style.setProperty("--tilt-x", "0deg");
-    event.currentTarget.style.setProperty("--tilt-y", "0deg");
+  const handleKeys = (event: KeyboardEvent<HTMLDivElement>) => {
+    if (modelSrc) return;
+    if (event.key === "ArrowLeft") {
+      event.preventDefault();
+      stepFrame(-1);
+    }
+    if (event.key === "ArrowRight") {
+      event.preventDefault();
+      stepFrame(1);
+    }
   };
 
   return (
     <article className="product">
       <div
-        className={`productStage${images.length > 1 ? " hasSpin" : ""}${isDragging ? " isDragging" : ""}`}
+        aria-label={`${name}. ${modelSrc ? "Drag to rotate the garment in 360 degrees." : images.length > 1 ? "Drag or use arrow keys to rotate through garment angles." : "Garment view."}`}
+        className={`productStage${modelSrc ? " hasModel" : images.length > 1 ? " hasFrames" : ""}`}
+        onKeyDown={handleKeys}
+        onPointerCancel={endDrag}
+        onPointerDown={startDrag}
+        onPointerEnter={() => setHovering(true)}
+        onPointerLeave={(event) => {
+          setHovering(false);
+          endDrag(event);
+        }}
+        onPointerMove={dragGarment}
+        onPointerUp={endDrag}
         role="group"
         tabIndex={0}
-        aria-label={`${name} interactive product view. Move to tilt; drag or use left and right arrow keys to rotate through ${images.length} mockups.`}
-        onPointerDown={startSpin}
-        onPointerMove={handleTilt}
-        onPointerUp={stopSpin}
-        onPointerCancel={stopSpin}
-        onPointerLeave={(event) => { resetTilt(event); setIsDragging(false); }}
-        onKeyDown={handleSpinKeys}
-        style={{ "--float-delay": `${(index % 6) * -0.4}s` } as CSSProperties}
       >
-        <span className="orbitRing" aria-hidden="true" />
-        <div className="tiltRig">
-          <div className="turntable">
-            <figure className="spinFace spinFront">
-              <img src={front.src} alt={front.alt || `${name}, selected mockup`} width={front.width} height={front.height} loading={index < 3 ? "eager" : "lazy"} fetchPriority={index < 3 ? "high" : "auto"} decoding="async" />
-            </figure>
-            <figure className="spinFace spinBack" aria-hidden="true">
-              <img src={back.src} alt="" width={back.width} height={back.height} loading="lazy" decoding="async" />
-            </figure>
-          </div>
-        </div>
-        <span className="spinHint">3D view · drag / hover · {activeImage + 1}/{images.length}</span>
+        {modelSrc ? (
+          <GlbGarment name={name} poster={images[0].src} src={modelSrc} />
+        ) : (
+          <figure className="garmentMedia" key={`${id}-${activeImage}`}>
+            <img
+              src={activeFrame.src}
+              alt={activeFrame.alt || `${name}, angle ${activeImage + 1} of ${images.length}`}
+              width={activeFrame.width}
+              height={activeFrame.height}
+              loading={index < 3 ? "eager" : "lazy"}
+              fetchPriority={index < 3 ? "high" : "auto"}
+              decoding="async"
+              draggable="false"
+            />
+          </figure>
+        )}
+        <span className="spinHint">
+          {modelSrc ? "Drag garment · 360°" : images.length > 1 ? `Drag garment · ${activeImage + 1}/${images.length}` : "Garment view"}
+        </span>
       </div>
 
-      <div className="mockupStrip" aria-label={`All ${images.length} mockups for ${name}`}>
+      <div className="mockupStrip" aria-label={`All ${images.length} garment angles for ${name}`}>
         {images.map((image, imageIndex) => (
-          <button type="button" className="mockupThumb" aria-label={`Show mockup ${imageIndex + 1} of ${images.length}`} aria-pressed={activeImage === imageIndex} onClick={() => setActiveImage(imageIndex)} key={`${id}-${imageIndex}`}>
+          <button
+            type="button"
+            className="mockupThumb"
+            aria-label={`Show garment angle ${imageIndex + 1} of ${images.length}`}
+            aria-pressed={activeImage === imageIndex}
+            onClick={() => setActiveImage(imageIndex)}
+            key={`${id}-${imageIndex}`}
+          >
             <img src={image.src} alt="" width={image.width} height={image.height} loading="lazy" decoding="async" />
             <span>{String(imageIndex + 1).padStart(2, "0")}</span>
           </button>
