@@ -23,7 +23,7 @@ export async function generateMetadata(): Promise<Metadata> {
     openGraph: {
       title,
       description,
-      images: [{ url: socialImage, width: 1744, height: 910, alt: "Turned a Diss Into Dominion — Lion Ass Bitch" }],
+      images: [{ url: socialImage, width: 1744, height: 910, alt: "LAB Ancestors Crest Boxy Zip Hoodie — Turned a Diss Into Dominion" }],
       type: "website",
     },
     twitter: {
