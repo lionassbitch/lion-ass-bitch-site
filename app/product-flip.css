@@ -15,7 +15,12 @@
     radial-gradient(circle at 50% 42%, color-mix(in srgb, var(--signal) 22%, transparent), transparent 27%),
     radial-gradient(circle at 50% 45%, #372042, #0b080d 70%);
   isolation: isolate;
+  cursor: grab;
+  touch-action: pan-y;
 }
+
+.productStage.isDragging { cursor: grabbing; }
+.productStage:focus-visible { outline: 2px solid var(--signal); outline-offset: 3px; }
 
 .productStage::before {
   position: absolute;
@@ -30,6 +35,7 @@
 }
 
 .productStage:hover::before { opacity: 1; transform: translateX(25%) rotate(7deg); }
+.productStage.isDragging::before { opacity: .8; transform: translateX(12%) rotate(7deg); }
 
 .orbitRing {
   position: absolute;

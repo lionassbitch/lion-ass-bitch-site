@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, type CSSProperties, type PointerEvent } from "react";
+import { useRef, useState, type CSSProperties, type KeyboardEvent, type PointerEvent } from "react";
 
 type ProductImage = {
   src: string;
@@ -30,18 +30,45 @@ const money = new Intl.NumberFormat("en-US", { style: "currency", currency: "USD
 
 export default function ProductCard({ id, index, images, name, note, shopDomain, variants }: ProductCardProps) {
   const [activeImage, setActiveImage] = useState(0);
+  const [isDragging, setIsDragging] = useState(false);
+  const dragX = useRef(0);
   const availableVariants = variants.filter((variant) => variant.available);
   const nextImage = images.length > 1 ? (activeImage + 1) % images.length : activeImage;
   const front = images[activeImage];
   const back = images[nextImage];
 
   const handleTilt = (event: PointerEvent<HTMLDivElement>) => {
-    if (event.pointerType === "touch") return;
-    const bounds = event.currentTarget.getBoundingClientRect();
-    const x = (event.clientX - bounds.left) / bounds.width;
-    const y = (event.clientY - bounds.top) / bounds.height;
-    event.currentTarget.style.setProperty("--tilt-x", `${(0.5 - y) * 9}deg`);
-    event.currentTarget.style.setProperty("--tilt-y", `${(x - 0.5) * 12}deg`);
+    if (event.pointerType !== "touch") {
+      const bounds = event.currentTarget.getBoundingClientRect();
+      const x = (event.clientX - bounds.left) / bounds.width;
+      const y = (event.clientY - bounds.top) / bounds.height;
+      event.currentTarget.style.setProperty("--tilt-x", `${(0.5 - y) * 9}deg`);
+      event.currentTarget.style.setProperty("--tilt-y", `${(x - 0.5) * 12}deg`);
+    }
+
+    if (!isDragging || images.length < 2) return;
+    const distance = event.clientX - dragX.current;
+    if (Math.abs(distance) < 34) return;
+    setActiveImage((current) => (current + (distance > 0 ? 1 : -1) + images.length) % images.length);
+    dragX.current = event.clientX;
+  };
+
+  const startSpin = (event: PointerEvent<HTMLDivElement>) => {
+    if (images.length < 2) return;
+    dragX.current = event.clientX;
+    setIsDragging(true);
+    event.currentTarget.setPointerCapture(event.pointerId);
+  };
+
+  const stopSpin = (event: PointerEvent<HTMLDivElement>) => {
+    if (event.currentTarget.hasPointerCapture(event.pointerId)) event.currentTarget.releasePointerCapture(event.pointerId);
+    setIsDragging(false);
+  };
+
+  const handleSpinKeys = (event: KeyboardEvent<HTMLDivElement>) => {
+    if (images.length < 2 || !["ArrowLeft", "ArrowRight"].includes(event.key)) return;
+    event.preventDefault();
+    setActiveImage((current) => (current + (event.key === "ArrowRight" ? 1 : -1) + images.length) % images.length);
   };
 
   const resetTilt = (event: PointerEvent<HTMLDivElement>) => {
@@ -52,9 +79,16 @@ export default function ProductCard({ id, index, images, name, note, shopDomain,
   return (
     <article className="product">
       <div
-        className={`productStage${images.length > 1 ? " hasSpin" : ""}`}
+        className={`productStage${images.length > 1 ? " hasSpin" : ""}${isDragging ? " isDragging" : ""}`}
+        role="group"
+        tabIndex={0}
+        aria-label={`${name} interactive product view. Move to tilt; drag or use left and right arrow keys to rotate through ${images.length} mockups.`}
+        onPointerDown={startSpin}
         onPointerMove={handleTilt}
-        onPointerLeave={resetTilt}
+        onPointerUp={stopSpin}
+        onPointerCancel={stopSpin}
+        onPointerLeave={(event) => { resetTilt(event); setIsDragging(false); }}
+        onKeyDown={handleSpinKeys}
         style={{ "--float-delay": `${(index % 6) * -0.4}s` } as CSSProperties}
       >
         <span className="orbitRing" aria-hidden="true" />
@@ -68,7 +102,7 @@ export default function ProductCard({ id, index, images, name, note, shopDomain,
             </figure>
           </div>
         </div>
-        <span className="spinHint">Hover to spin · drag the light</span>
+        <span className="spinHint">3D view · drag / hover · {activeImage + 1}/{images.length}</span>
       </div>
 
       <div className="mockupStrip" aria-label={`All ${images.length} mockups for ${name}`}>
