@@ -1,4 +1,5 @@
 import catalogSnapshot from "./catalog-snapshot";
+import ProductCard from "./ProductCard";
 
 const SHOP_DOMAIN = "exsuvera-presents.myshopify.com";
 const PRODUCTS_PER_PAGE = 250;
@@ -106,85 +107,57 @@ export default async function Home() {
       </header>
 
       <section className="hero" id="top">
-        <video autoPlay muted loop playsInline poster="/assets/crystal-city.png"><source src="/assets/artifact-02.mp4" type="video/mp4" /></video>
+        <video autoPlay muted loop playsInline poster="/assets/lab-trinity-neon.webp"><source src="/assets/lab-trinity-loop.mp4" type="video/mp4" /></video>
         <div className="veil" />
         <div className="heroCopy">
           <p className="eyebrow">The current inventory / The gate is open</p>
-          <h1>Wear the<br/><i>myth.</i></h1>
-          <p className="intro">Art, apparel, and artifacts for anyone bold enough to enter. Lion Ass Bitch makes luxury louder, stranger, and impossible to ignore.</p>
+          <h1>A diss built<br/><i>a dynasty.</i></h1>
+          <p className="intro">Turned the slur into the signal. Lion Ass Bitch is Bronx-born fashion, art, and attitude for anyone who refuses to shrink.</p>
           <div className="actions"><a className="button light" href="#drop">Shop all live pieces</a><a className="button ghost" href="#world">Enter the world</a></div>
         </div>
         <p className="sideNote">Luxury with teeth · New York · Est. 2022</p>
       </section>
 
-      <section className="marquee" aria-label="Brand values"><div>WEAR THE MYTH <span>✦</span> NO PERMISSION NEEDED <span>✦</span> ART FOR THE BODY <span>✦</span> WEAR THE MYTH <span>✦</span></div></section>
+      <section className="marquee" aria-label="Brand values"><div>A DISS BUILT A DYNASTY <span>✦</span> TURNED THE SLUR INTO THE SIGNAL <span>✦</span> FUCK FAKE <span>✦</span> A DISS BUILT A DYNASTY <span>✦</span></div></section>
+
+      <figure className="warningBanner">
+        <img src="/assets/lab-warning-banner.webp" alt="Fuck fake. This is not a brand. This is a warning." />
+      </figure>
 
       <section className="drop" id="drop">
         <div className="sectionHead"><div><p className="eyebrow">All live pieces / {products.length} available</p><h2>Current<br/>inventory</h2></div><p>Every storefront-ready piece and every Shopify mockup in one living universe. Choose your exact option, then add it straight to the Shopify cart.</p></div>
         <div className="productGrid">
-          {products.map((product, index) => {
-            const availableVariants = product.variants.filter((variant) => variant.available);
-            const hasMultipleVariants = availableVariants.length > 1;
-
-            return (
-              <article className="product" key={product.id}>
-                <div className="productGallery" role="group" aria-label={`${product.name} mockups`}>
-                  <div className="imageRail">
-                    {product.images.map((image, imageIndex) => (
-                      <figure className="productMockup" key={`${product.id}-${imageIndex}`}>
-                      <img
-                          src={image.src}
-                          alt={image.alt || `${product.name}, mockup ${imageIndex + 1} of ${product.images.length}`}
-                          width={image.width}
-                          height={image.height}
-                          loading={index < 3 && imageIndex === 0 ? "eager" : "lazy"}
-                          fetchPriority={index < 3 && imageIndex === 0 ? "high" : "auto"}
-                        decoding="async"
-                      />
-                        <figcaption>{String(imageIndex + 1).padStart(2, "0")} / {String(product.images.length).padStart(2, "0")}</figcaption>
-                      </figure>
-                    ))}
-                  </div>
-                  {product.images.length > 1 ? <span className="galleryHint">Swipe / scroll all {product.images.length} mockups →</span> : null}
-                </div>
-                <div className="productMeta"><span>{String(index + 1).padStart(2, "0")}</span><h3>{product.name}</h3><small>{product.note}</small></div>
-                <form className="shopifyCartForm" action={`https://${SHOP_DOMAIN}/cart/add`} method="post">
-                  <input type="hidden" name="quantity" value="1" />
-                  <input type="hidden" name="return_to" value="/cart" />
-                  {availableVariants.length > 0 ? (
-                    <>
-                      <label htmlFor={`variant-${product.id}`}>{hasMultipleVariants ? "Choose color / size" : "Selected option"}</label>
-                      <select id={`variant-${product.id}`} name="id" defaultValue={String(availableVariants[0].id)}>
-                        {availableVariants.map((variant) => (
-                          <option value={variant.id} key={variant.id}>{variant.title} · {money.format(Number.parseFloat(variant.price))}</option>
-                        ))}
-                      </select>
-                      <button className="shopifyCartButton" type="submit">Add to Shopify cart</button>
-                    </>
-                  ) : (
-                    <button className="shopifyCartButton" type="button" disabled>Sold out on Shopify</button>
-                  )}
-                </form>
-              </article>
-            );
-          })}
+          {products.map((product, index) => <ProductCard {...product} index={index} shopDomain={SHOP_DOMAIN} key={product.id} />)}
         </div>
         <a className="textLink" href={`https://${SHOP_DOMAIN}/cart`}>View Shopify cart <span>→</span></a>
       </section>
 
       <section className="world" id="world">
-        <img src="/assets/court-walk.png" alt="Lion Ass Bitch fashion campaign" />
-        <div className="worldCopy"><p className="eyebrow">Not a label. A universe.</p><h2>Come as<br/>you are.<br/><i>Leave iconic.</i></h2><p>Every drop is a new room: cosmic intelligence, monstrous beauty, crystal energy, and a cast of mascots with something to say.</p><a className="button light" href="https://www.lionassbitch.com/">Explore the LAB</a></div>
+        <img src="/assets/lab-trinity-neon.webp" alt="Pryde, Kickz, and Khemetz walking through a neon Bronx alley" />
+        <div className="worldCopy"><p className="eyebrow">Not a label. A signal.</p><h2>Turned the slur<br/>into <i>the signal.</i></h2><p>A diss became a dynasty. Three archetypes carry the warning from the Bronx into every piece: sovereign will, stubborn truth, and sacred reckoning.</p><a className="button light" href="#drop">Wear the warning</a></div>
+      </section>
+
+      <section className="trinity" aria-labelledby="trinity-title">
+        <div className="trinityHead"><p className="eyebrow">The bloodline</p><h2 id="trinity-title">Three forces.<br/>No permission.</h2></div>
+        <article><img src="/assets/pryde-threshold.webp" alt="Pryde, the lion, standing in a neon temple" /><div><span>01 / Sovereign will</span><h3>Pryde</h3></div></article>
+        <article><img src="/assets/kickz-neon.webp" alt="Kickz, the donkey, walking through a neon rain-soaked street" /><div><span>02 / Stubborn truth</span><h3>Kickz</h3></div></article>
+        <article><img src="/assets/khemetz-temple.webp" alt="Khemetz, the black jackal, standing in a gold and magenta temple" /><div><span>03 / Sacred reckoning</span><h3>Khemetz</h3></div></article>
+      </section>
+
+      <section className="streetFilm">
+        <div><p className="eyebrow">Bronx transmission / 01:24</p><h2>Kickz<br/>outside.</h2><p>The mascot leaves the mythology and hits the block. Press play for the full signal.</p></div>
+        <video controls playsInline preload="metadata" poster="/assets/kickz-bronx-poster.webp"><source src="/assets/kickz-bronx-scene.mp4" type="video/mp4" /></video>
       </section>
 
       <section className="manifesto" id="manifesto">
         <p className="eyebrow">The manifesto</p>
         <p className="statement">Clothes are not a costume.<br/>They are <em>evidence.</em></p>
+        <img className="manifestoSeal" src="/assets/lab-manifesto-wheel.webp" alt="Fuck fake, be you or be gone manifesto artwork with the LAB trinity" />
         <div className="manifestoGrid"><p>Lion Ass Bitch is for the maximalist, the minimalist, the misfit, and the main character. No gatekeeping. No shrinking. No permission needed.</p><p>Made to order. Shipped worldwide.<br/>Designed in the LAB.</p></div>
       </section>
 
-      <section className="finalCta"><video autoPlay muted loop playsInline poster="/assets/crystal-city.png"><source src="/assets/artifact-03.mp4" type="video/mp4" /></video><div className="veil"/><div><p className="eyebrow">The gate is open</p><h2>Enter<br/>the LAB.</h2><a className="button light" href={`https://${SHOP_DOMAIN}/cart`}>View Shopify cart</a></div></section>
-      <footer><a className="wordmark" href="#top"><span>LAB</span><b>Lion Ass Bitch</b></a><p>Luxury with teeth. Myth with receipts.</p><div><a href="https://www.instagram.com/lionassbitch/">Instagram</a><a href={`https://${SHOP_DOMAIN}/cart`}>Shopify cart</a></div><small>© 2026 Lion Ass Bitch LLC</small></footer>
+      <section className="finalCta"><video autoPlay muted loop playsInline poster="/assets/lab-trinity-neon.webp"><source src="/assets/lab-trinity-loop.mp4" type="video/mp4" /></video><div className="veil"/><div><p className="eyebrow">This is not a brand</p><h2>This is<br/>a warning.</h2><a className="button light" href={`https://${SHOP_DOMAIN}/cart`}>View Shopify cart</a></div></section>
+      <footer><a className="wordmark" href="#top"><span>LAB</span><b>Lion Ass Bitch</b></a><p>A diss built a dynasty.</p><div><a href="https://www.instagram.com/lionassbitch/">Instagram</a><a href={`https://${SHOP_DOMAIN}/cart`}>Shopify cart</a></div><small>© 2026 Lion Ass Bitch LLC</small></footer>
     </main>
   );
 }

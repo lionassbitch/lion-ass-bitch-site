@@ -47,7 +47,7 @@ test("uses Shopify-only direct cart forms with every available variant", async (
   const html = await response.text();
   const productCards = html.match(/class="product(?:\s|")/g) ?? [];
   const cartForms = html.match(/action="https:\/\/exsuvera-presents\.myshopify\.com\/cart\/add"/g) ?? [];
-  const renderedMockups = html.match(/class="productMockup"/g) ?? [];
+  const renderedMockups = html.match(/class="mockupThumb"/g) ?? [];
   const expectedImageCount = products.reduce((total, product) => total + product.images.length, 0);
 
   assert.equal(productCards.length, products.length);
