@@ -1,38 +1,16 @@
 "use client";
 
-import { useEffect, useRef, useState, type KeyboardEvent, type PointerEvent } from "react";
-import { findGarmentModel } from "./garment-models";
+import {
+  useEffect,
+  useRef,
+  useState,
+  type KeyboardEvent,
+  type PointerEvent,
+} from "react";
+import { findGarmentModel } from "../garment-models";
+import type { ShopifyImage } from "../lib/catalog";
 
-type ProductImage = {
-  src: string;
-  alt?: string | null;
-  width?: number;
-  height?: number;
-};
-
-type ProductVariant = {
-  id: number;
-  title: string;
-  price: string;
-  available: boolean;
-};
-
-type ProductCardProps = {
-  handle: string;
-  id: number;
-  index: number;
-  images: ProductImage[];
-  name: string;
-  note: string;
-  shopDomain: string;
-  variants: ProductVariant[];
-};
-
-type ModelViewerElement = HTMLElement & {
-  cameraOrbit?: string;
-};
-
-const money = new Intl.NumberFormat("en-US", { style: "currency", currency: "USD" });
+type ModelViewerElement = HTMLElement & { cameraOrbit?: string };
 
 function normalizeFrame(frame: number, length: number) {
   return ((frame % length) + length) % length;
@@ -47,7 +25,6 @@ function GlbGarment({ name, poster, src }: { name: string; poster: string; src: 
 
     void import("@google/model-viewer").then(() => {
       if (cancelled || !host) return;
-
       const viewer = document.createElement("model-viewer") as ModelViewerElement;
       viewer.setAttribute("src", src);
       viewer.setAttribute("poster", poster);
@@ -74,22 +51,30 @@ function GlbGarment({ name, poster, src }: { name: string; poster: string; src: 
   return <div className="garmentModelHost" ref={hostRef} />;
 }
 
-export default function ProductCard({ handle, id, index, images, name, note, shopDomain, variants }: ProductCardProps) {
+export default function RelicGallery({
+  handle,
+  name,
+  images,
+  eager = false,
+}: {
+  handle: string;
+  name: string;
+  images: ShopifyImage[];
+  eager?: boolean;
+}) {
   const [activeImage, setActiveImage] = useState(0);
   const [hovering, setHovering] = useState(false);
   const dragStart = useRef<{ frame: number; x: number } | null>(null);
   const modelSrc = findGarmentModel(handle, name);
-  const availableVariants = variants.filter((variant) => variant.available);
   const activeFrame = images[activeImage] ?? images[0];
 
   useEffect(() => {
     if (modelSrc || !hovering || images.length < 2) return;
     if (window.matchMedia("(prefers-reduced-motion: reduce)").matches) return;
-
-    const interval = window.setInterval(() => {
-      setActiveImage((current) => normalizeFrame(current + 1, images.length));
-    }, images.length > 4 ? 520 : 1250);
-
+    const interval = window.setInterval(
+      () => setActiveImage((current) => normalizeFrame(current + 1, images.length)),
+      images.length > 4 ? 520 : 1250,
+    );
     return () => window.clearInterval(interval);
   }, [hovering, images.length, modelSrc]);
 
@@ -133,10 +118,18 @@ export default function ProductCard({ handle, id, index, images, name, note, sho
     }
   };
 
+  if (!activeFrame) return null;
+
   return (
-    <article className="product">
+    <div className="relicGallery">
       <div
-        aria-label={`${name}. ${modelSrc ? "Drag to rotate the garment in 360 degrees." : images.length > 1 ? "Drag or use arrow keys to rotate through garment angles." : "Garment view."}`}
+        aria-label={`${name}. ${
+          modelSrc
+            ? "Drag to rotate the garment in 360 degrees."
+            : images.length > 1
+              ? "Drag or use arrow keys to rotate through garment angles."
+              : "Garment view."
+        }`}
         className={`productStage${modelSrc ? " hasModel" : images.length > 1 ? " hasFrames" : ""}`}
         onKeyDown={handleKeys}
         onPointerCancel={endDrag}
@@ -154,54 +147,45 @@ export default function ProductCard({ handle, id, index, images, name, note, sho
         {modelSrc ? (
           <GlbGarment name={name} poster={images[0].src} src={modelSrc} />
         ) : (
-          <figure className="garmentMedia" key={`${id}-${activeImage}`}>
+          <figure className="garmentMedia" key={`${handle}-${activeImage}`}>
             <img
               src={activeFrame.src}
               alt={activeFrame.alt || `${name}, angle ${activeImage + 1} of ${images.length}`}
               width={activeFrame.width}
               height={activeFrame.height}
-              loading={index < 3 ? "eager" : "lazy"}
-              fetchPriority={index < 3 ? "high" : "auto"}
+              loading={eager ? "eager" : "lazy"}
+              fetchPriority={eager ? "high" : "auto"}
               decoding="async"
               draggable="false"
             />
           </figure>
         )}
         <span className="spinHint">
-          {modelSrc ? "Drag garment · 360°" : images.length > 1 ? `Drag garment · ${activeImage + 1}/${images.length}` : "Garment view"}
+          {modelSrc
+            ? "Drag garment · 360°"
+            : images.length > 1
+              ? `Drag garment · ${activeImage + 1}/${images.length}`
+              : "Garment view"}
         </span>
       </div>
 
-      <div className="mockupStrip" aria-label={`All ${images.length} garment angles for ${name}`}>
-        {images.map((image, imageIndex) => (
-          <button
-            type="button"
-            className="mockupThumb"
-            aria-label={`Show garment angle ${imageIndex + 1} of ${images.length}`}
-            aria-pressed={activeImage === imageIndex}
-            onClick={() => setActiveImage(imageIndex)}
-            key={`${id}-${imageIndex}`}
-          >
-            <img src={image.src} alt="" width={image.width} height={image.height} loading="lazy" decoding="async" />
-            <span>{String(imageIndex + 1).padStart(2, "0")}</span>
-          </button>
-        ))}
-      </div>
-
-      <div className="productMeta"><span>{String(index + 1).padStart(2, "0")}</span><h3>{name}</h3><small>{note}</small></div>
-      <form className="shopifyCartForm" action={`https://${shopDomain}/cart/add`} method="post">
-        <input type="hidden" name="quantity" value="1" />
-        <input type="hidden" name="return_to" value="/cart" />
-        {availableVariants.length > 0 ? (
-          <>
-            <label htmlFor={`variant-${id}`}>{availableVariants.length > 1 ? "Choose color / size" : "Selected option"}</label>
-            <select id={`variant-${id}`} name="id" defaultValue={String(availableVariants[0].id)}>
-              {availableVariants.map((variant) => <option value={variant.id} key={variant.id}>{variant.title} · {money.format(Number.parseFloat(variant.price))}</option>)}
-            </select>
-            <button className="shopifyCartButton" type="submit">Add to Shopify cart</button>
-          </>
-        ) : <button className="shopifyCartButton" type="button" disabled>Sold out on Shopify</button>}
-      </form>
-    </article>
+      {images.length > 1 ? (
+        <div className="mockupStrip" aria-label={`All ${images.length} garment angles for ${name}`}>
+          {images.map((image, imageIndex) => (
+            <button
+              type="button"
+              className="mockupThumb"
+              aria-label={`Show garment angle ${imageIndex + 1} of ${images.length}`}
+              aria-pressed={activeImage === imageIndex}
+              onClick={() => setActiveImage(imageIndex)}
+              key={`${handle}-${imageIndex}`}
+            >
+              <img src={image.src} alt="" width={image.width} height={image.height} loading="lazy" decoding="async" />
+              <span>{String(imageIndex + 1).padStart(2, "0")}</span>
+            </button>
+          ))}
+        </div>
+      ) : null}
+    </div>
   );
 }

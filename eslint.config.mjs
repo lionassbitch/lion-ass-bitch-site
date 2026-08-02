@@ -12,6 +12,10 @@ const eslintConfig = defineConfig([
     "out/**",
     "build/**",
     "next-env.d.ts",
+    // Build artifacts and generated bundles must never be linted.
+    ".output/**",
+    "dist/**",
+    ".wrangler/**",
   ]),
 ]);
 
