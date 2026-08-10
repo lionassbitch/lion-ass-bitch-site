@@ -57,12 +57,13 @@ function HandStar() {
 
 export default function VoguejitsuPage() {
   return (
-    <main className="vj-page">
-      <header className="vj-nav">
-        <Link className="vj-brand" href="/voguejitsu" aria-label="Voguejitsu home"><span>VJ</span><b>Voguejitsu</b></Link>
-        <nav aria-label="Voguejitsu navigation"><a href="#code">The code</a><a href="#forms">Five forms</a><a href="#function">The function</a><a href="#oath">The oath</a></nav>
-        <Link className="vj-return" href="/">Enter LAB <span>↗</span></Link>
-      </header>
+    <div className="vj-page">
+      <nav className="vj-anchors" aria-label="Voguejitsu sections">
+        <a href="#code">The code</a>
+        <a href="#forms">Five forms</a>
+        <a href="#function">The function</a>
+        <a href="#oath">The oath</a>
+      </nav>
 
       <section className="vj-hero" id="top">
         <div className="vj-grid-lines" aria-hidden="true" /><div className="vj-orbit vj-orbit-one" aria-hidden="true" /><div className="vj-orbit vj-orbit-two" aria-hidden="true" /><div className="vj-hero-mark"><HandStar /></div>
@@ -110,7 +111,14 @@ export default function VoguejitsuPage() {
 
       <section className="vj-oath" id="oath"><div className="vj-oath-star"><HandStar /></div><p className="vj-kicker">The Voguejitsu oath</p><blockquote><span>I enter with intention.</span><span>I move with precision.</span><span>I transform pressure into beauty.</span><span>I honor the houses and legends before me.</span><span>I protect my body, my community, and my truth.</span><span>I do not disappear to make others comfortable.</span><span>I leave the floor more powerful than I entered it.</span></blockquote><a className="vj-button vj-button-hot" href="#top">Return to the entrance ↑</a></section>
 
-      <footer className="vj-footer"><Link className="vj-brand" href="/voguejitsu"><span>VJ</span><b>Voguejitsu</b></Link><p>Victory without destruction.</p><p>A conceptual performance discipline rooted in respect for ballroom history and its creators.</p><Link href="/">Lion Ass Bitch ↗</Link></footer>
-    </main>
+      <section className="vj-coda" aria-label="Voguejitsu closing">
+        <p className="vj-kicker">Victory without destruction</p>
+        <p>A conceptual performance discipline within Exsuvera Studios, rooted in respect for ballroom history and its creators.</p>
+        <div className="vj-actions">
+          <Link className="vj-button vj-button-hot" href="/exsuvera">Exsuvera Studios ↗</Link>
+          <Link className="vj-button" href="/archive">Enter the archive ↗</Link>
+        </div>
+      </section>
+    </div>
   );
 }

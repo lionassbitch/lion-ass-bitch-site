@@ -98,6 +98,11 @@ h1 i,
   box-shadow: 0 0 80px #ff2cab20;
 }
 
+.trinityCard { display: block; }
+.trinityCard article { height: 100%; }
+.trinityCard:hover h3 { color: var(--signal); }
+.trinityCard:focus-visible { outline: 2px solid var(--signal); outline-offset: 3px; }
+
 .world { background: #0e0610; }
 .world > img { filter: saturate(.95) contrast(1.08); }
 

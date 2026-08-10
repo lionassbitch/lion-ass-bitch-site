@@ -41,3 +41,9 @@ next-env.d.ts
 /outputs/
 /work/
 *.tar.gz
+
+# build output (nitro)
+/.output/
+
+# typescript build info
+*.tsbuildinfo
