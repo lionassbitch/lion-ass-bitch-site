@@ -95,16 +95,35 @@ The four posters signed off 2026-08-21. **These are the primary conditioning
 references** — feed them for any render of these characters. They outrank the
 older Flux identity heroes on wardrobe, world and framing.
 
-| Character | Plate |
-|---|---|
-| Pryde | `docs/canon/pryde_poster_canonical.webp` |
-| Kickz | `docs/canon/kickz_poster_canonical.webp` |
-| Khemetz / Anput | `docs/canon/anput_poster_canonical.webp` |
-| Eddie Colón | `docs/canon/eddie_poster_canonical.webp` |
+| Character | Repo path | Cloudinary |
+|---|---|---|
+| Pryde | `docs/canon/pryde_poster_canonical.webp` | `https://res.cloudinary.com/drd16h5hl/image/upload/v1787347541/pryde_poster_canonical.webp` |
+| Kickz | `docs/canon/kickz_poster_canonical.webp` | `https://res.cloudinary.com/drd16h5hl/image/upload/v1787347542/kickz_poster_canonical.webp` |
+| Khemetz / Anput | `docs/canon/anput_poster_canonical.webp` | `https://res.cloudinary.com/drd16h5hl/image/upload/v1787347542/anput_poster_canonical.webp` |
+| Eddie Colón | `docs/canon/eddie_poster_canonical.webp` | `https://res.cloudinary.com/drd16h5hl/image/upload/v1787347543/eddie_poster_canonical.webp` |
 
-1024x1536 (2:3), webp q92, committed to the repo so they survive independently of
-any skill directory or CDN. Mirror them to Cloudinary as
-`{character}_poster_canonical` when Cloudinary access is restored.
+1024x1536 (2:3), webp q92. Held in two places on purpose: the repo copy survives
+independently of any CDN or account, the Cloudinary copy is what generation tools
+consume. Tagged `canon`, `law_2026_08_21`, `poster_canonical` and filed under
+`LAB/characters/{name}`.
+
+### Cloudinary authority order — READ THIS BEFORE PULLING A REF
+
+Three asset families in Cloudinary carry `canonical` in the name. They do not
+agree with each other. In descending authority:
+
+1. **`{character}_poster_canonical`** (2026-08-21) — **THE LAW.** Anthropomorphic,
+   Bronx-is-the-Pyramid, current wardrobe. Use these.
+2. **`{character}_hero_canonical`** (2026-04-18) — anthropomorphic, correct body
+   plan, **retired wardrobe**. Identity conditioning only. Never for wardrobe.
+3. **`{character}_primal_canonical`** (2026-06-13) — **NON-CANON.** Naturalistic
+   daylight quadrupeds. This family is what pulled the production site off-model.
+   Never feed it. It is only still named `canonical` because renaming someone's
+   live assets needs a decision, not an assumption — see *Superseded Assets*.
+
+The related `{character}_motion_canonical`, `_action_canonical` and
+`_closeup_canonical` sets (2026-04-23) are video-reference derivatives of family 2
+and inherit its identity-only status.
 
 ---
 
@@ -288,3 +307,21 @@ Every one of these is **non-canon as of 2026-08-21** — all quadruped:
 
 They remain live on the site until replaced. Regenerating them against this canon
 is the outstanding work.
+
+### Cloudinary — the quadruped source
+
+| Asset | Note |
+|---|---|
+| `pryde_primal_canonical` | 2026-06-13, 1664x2496 PNG, `LAB/characters/pryde` |
+| `kickz_primal_canonical` | 2026-06-13, 1664x2496 PNG, `LAB/characters/kickz` |
+| `khemetz_primal_canonical` | 2026-06-13, 1664x2496 PNG, `LAB/characters/khemetz` |
+
+Verified quadruped: naturalistic daylight wildlife portraits with a LAB badge.
+Dated between the 2026-04-18 canon and the 2026-07-21 site refresh, which makes
+this family the most likely origin of the drift.
+
+**They still carry `canonical` in their public_id, which is a live trap** — any
+tool or session searching for canonical refs can pick them up and re-drift. The
+fix under this canon's own naming discipline is a rename to
+`archive_{character}_primal`. Not done yet: renaming live assets can break
+references outside this repo, so it needs Eddie's explicit go-ahead.
