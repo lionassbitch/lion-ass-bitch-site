@@ -315,6 +315,63 @@ Eddie is now the best-referenced character in the canon.
 
 ---
 
+## ORION — The Signal
+
+**Not a character. Not an alias. A separate entity.**
+
+**Form (LOCKED):** an **amethyst dodecahedron** — the twelve-faced Platonic solid,
+rendered in amethyst: purple crystalline quartz, faceted, translucent, with the
+internal banding and colour-zoning real amethyst carries.
+
+**Relationship to the lineup:** Eddie is the **receiver**, Orion is the **source**.
+Eddie's own spec says he "deciphers the signals from Orion." Orion transmits;
+the Architect reads. Nobody else in the canon is documented as receiving it.
+
+### Correction — Orion was never Eddie
+
+The 2026-04-18 canon filed this as a single entry: *"EDDIE / ORION — The Architect."*
+That was wrong. It treated Orion as Eddie's alias and erased a distinct entity from
+the mythology. **Retired 2026-08-21 on Eddie's explicit confirmation.** Eddie is
+Eddie. Orion is Orion. Never write them as one.
+
+### Why the form matters
+
+Amethyst **is** the locked violet. The brand's dominant colour and Orion's material
+are the same substance, which means the violet running through every LAB frame —
+the neon, the armour conduits, the name type — can be read in-world as Orion's
+signal reaching the street. That is not decoration; it is the palette having a
+source.
+
+The dodecahedron is the twelve-faced solid classically assigned to the cosmos
+itself — the shape used for the heavens when the other four Platonic solids were
+assigned to the elements. A cosmic-order form transmitting to a man in the Bronx is
+the same move the world already makes with the pyramid on the skyline.
+
+**Available resonance, not yet locked:** Orion is also the constellation Egyptian
+cosmology identifies with Osiris, and the one the Giza pyramids are popularly held
+to mirror. Given that this world's premise is a pyramid standing at the end of a
+Bronx avenue, the name is already doing structural work. Flagged as available if
+Eddie wants to draw on it — not written as canon, because he has not said so.
+
+### Open — needs Eddie
+
+None of the following is invented here. Answer them and this block gets finished:
+
+- **Scale.** Handheld object, room-sized, or monumental?
+- **Manifestation.** Solid physical presence, apparition, projection, or only ever
+  implied and off-frame?
+- **Behaviour.** Static, slowly rotating, pulsing, fracturing, growing?
+- **Light.** Does it emit, or only refract what is around it?
+- **In frame?** Does Orion ever appear in a rendered plate, or is it always
+  something Eddie is reacting to rather than something we see?
+- **Nature.** Machine, deity, ancestor, artefact, or deliberately unexplained?
+
+Until these are answered, **do not render Orion.** A guessed form becomes canon by
+accident the moment it is generated, and this entity has already been mis-filed
+once.
+
+---
+
 ## Lineup Formation
 
 When the full lineup shares a frame:
@@ -347,6 +404,9 @@ canon. Changes:
 5. **Anput registered as Khemetz's sacred name.** Both names canon, same character.
 6. **Eddie Colón promoted to full lineup member** with a locked anchor and preset.
 7. **Taglines and per-character sigils locked** for all four.
+8. **Orion separated from Eddie** and given its own entry. The prior canon filed
+   them as one. Orion is an amethyst dodecahedron, a distinct entity that
+   transmits signals Eddie deciphers.
 
 **Prior scar tissue retained from the 2026-04-18 canon:**
 
