@@ -89,6 +89,25 @@ important sits behind it.
 
 ---
 
+## Canonical Reference Plates
+
+The four posters signed off 2026-08-21. **These are the primary conditioning
+references** — feed them for any render of these characters. They outrank the
+older Flux identity heroes on wardrobe, world and framing.
+
+| Character | Plate |
+|---|---|
+| Pryde | `docs/canon/pryde_poster_canonical.webp` |
+| Kickz | `docs/canon/kickz_poster_canonical.webp` |
+| Khemetz / Anput | `docs/canon/anput_poster_canonical.webp` |
+| Eddie Colón | `docs/canon/eddie_poster_canonical.webp` |
+
+1024x1536 (2:3), webp q92, committed to the repo so they survive independently of
+any skill directory or CDN. Mirror them to Cloudinary as
+`{character}_poster_canonical` when Cloudinary access is restored.
+
+---
+
 ## PRYDE — The Lion / Sovereign Will
 
 **Archetype:** Sovereign Will. Strength through wisdom, not brute force.
