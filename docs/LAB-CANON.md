@@ -353,13 +353,49 @@ to mirror. Given that this world's premise is a pyramid standing at the end of a
 Bronx avenue, the name is already doing structural work. Flagged as available if
 Eddie wants to draw on it — not written as canon, because he has not said so.
 
+### Manifestation — quail sightings (LOCKED)
+
+**Orion's signal reaches the street as quail.** The sightings *are* the
+transmission. When Eddie's spec says he "deciphers the signals from Orion," what
+he is deciphering is what the quail spell.
+
+This is why the bird and not another: the quail chick is Gardiner **G43**, 𓅱, the
+Egyptian uniliteral hieroglyph for the sound *w*. In a world whose obelisks and
+armour are covered in glyphs, a live quail on a Bronx avenue is **a letter walking
+around loose**. A cosmic-order solid transmits; the transmission lands as
+characters from the writing system; a man in the Bronx reads them. The mechanic is
+complete and it is literal.
+
+**Render rules:**
+
+- A quail in frame is **never set dressing**. It is a signal. One quail carries
+  more weight than a flock; if it is in the shot, the shot is about it.
+- Quail render in **primal register** — a real bird, real anatomy, naturalistic.
+  A quail is by definition an animal appearing as an animal, so the two-register
+  law places it there automatically. It never wears anything, never anthropomorphises.
+- Placement is Bronx-ordinary: kerb, fire escape, chain-link, wet asphalt, the lip
+  of a grate. The signal arrives in the mundane, not on an altar.
+- **Available, not locked:** a faint amethyst catchlight in the eye or along the
+  back, marking it as carrying Orion's charge. Use if Eddie wants the link visible;
+  a plain bird reads as more uncanny.
+
+### What this settles
+
+Quail answer how the **signal** manifests — not whether **Orion itself** ever
+appears. Those are different questions, and this makes the "never in frame" option
+much stronger: you do not see the dodecahedron, you see the birds it sends. An
+entity known only by its transmissions carries more weight than one you show.
+
+Orion's own visibility remains open below.
+
 ### Open — needs Eddie
 
 None of the following is invented here. Answer them and this block gets finished:
 
 - **Scale.** Handheld object, room-sized, or monumental?
-- **Manifestation.** Solid physical presence, apparition, projection, or only ever
-  implied and off-frame?
+- **Manifestation of Orion itself.** Solid physical presence, apparition,
+  projection, or only ever implied and off-frame? *(How its signal manifests is
+  settled — quail. This asks about the dodecahedron.)*
 - **Behaviour.** Static, slowly rotating, pulsing, fracturing, growing?
 - **Light.** Does it emit, or only refract what is around it?
 - **In frame?** Does Orion ever appear in a rendered plate, or is it always
@@ -369,22 +405,6 @@ None of the following is invented here. Answer them and this block gets finished
 Until these are answered, **do not render Orion.** A guessed form becomes canon by
 accident the moment it is generated, and this entity has already been mis-filed
 once.
-
-### Quail sightings — UNRESOLVED, recorded verbatim
-
-Eddie, 2026-08-21, immediately after confirming Orion: **"And quail sightings."**
-
-That is the whole of it. Recorded so it is not lost, **not** written as canon,
-because three words do not say whether quail sightings are how Orion's signal
-reaches the street, a separate omen in the mythology, or something else entirely.
-
-**Factual note that may or may not be the point:** the quail chick is a standard
-Egyptian hieroglyph — Gardiner G43, 𓅱 — the uniliteral sign for the sound *w*. In
-a world whose obelisks and armour are covered in glyphs, a live quail on a Bronx
-street is a letter walking around loose. That reading would sit exactly on top of
-Orion transmitting signals a man has to decipher.
-
-Offered as a reading, not a ruling. Pending Eddie.
 
 ---
 
@@ -423,6 +443,8 @@ canon. Changes:
 8. **Orion separated from Eddie** and given its own entry. The prior canon filed
    them as one. Orion is an amethyst dodecahedron, a distinct entity that
    transmits signals Eddie deciphers.
+9. **Quail sightings locked as Orion's manifestation.** The signal reaches the
+   street as quail — Gardiner G43, the hieroglyph for *w*. Letters walking loose.
 
 **Prior scar tissue retained from the 2026-04-18 canon:**
 
