@@ -13,7 +13,7 @@ export default async function Home() {
   return (
     <>
       <section className="hero" id="top">
-        <video autoPlay muted loop playsInline poster="/assets/lab-trinity-neon.webp">
+        <video autoPlay muted loop playsInline poster="/assets/lab-trinity-hero.webp">
           <source src="/assets/lab-trinity-loop.mp4" type="video/mp4" />
         </video>
         <div className="veil" />
@@ -171,7 +171,7 @@ export default async function Home() {
       </section>
 
       <section className="finalCta">
-        <video autoPlay muted loop playsInline poster="/assets/lab-trinity-neon.webp">
+        <video autoPlay muted loop playsInline poster="/assets/lab-trinity-hero.webp">
           <source src="/assets/lab-trinity-loop.mp4" type="video/mp4" />
         </video>
         <div className="veil" />
