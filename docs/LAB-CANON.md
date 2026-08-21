@@ -388,23 +388,58 @@ entity known only by its transmissions carries more weight than one you show.
 
 Orion's own visibility remains open below.
 
-### Open — needs Eddie
+### Form, behaviour and nature — DERIVED
 
-None of the following is invented here. Answer them and this block gets finished:
+Every answer below is derived from material already locked, not invented. The
+reasoning is kept so it can be argued with.
 
-- **Scale.** Handheld object, room-sized, or monumental?
-- **Manifestation of Orion itself.** Solid physical presence, apparition,
-  projection, or only ever implied and off-frame? *(How its signal manifests is
-  settled — quail. This asks about the dodecahedron.)*
-- **Behaviour.** Static, slowly rotating, pulsing, fracturing, growing?
-- **Light.** Does it emit, or only refract what is around it?
-- **In frame?** Does Orion ever appear in a rendered plate, or is it always
-  something Eddie is reacting to rather than something we see?
-- **Nature.** Machine, deity, ancestor, artefact, or deliberately unexplained?
+**Scale — sky-scale and far.** The world's own rule is that the mythic is *civic
+infrastructure*, never spectacle. A monumental Orion sitting in the street would
+be spectacle and would break that rule; a handheld crystal would make the cosmos
+solid a trinket. The decisive tell is the quail: **you do not need a messenger for
+something that is present.** The existence of a carrier proves distance. Orion is
+above and beyond the pyramid, which is the largest thing this world's skyline
+holds.
 
-Until these are answered, **do not render Orion.** A guessed form becomes canon by
-accident the moment it is generated, and this entity has already been mis-filed
-once.
+**Visibility — never in frame. Permanent.** Same reasoning, arrived at from the
+other side. If Orion were renderable, everyone would see it, and Eddie's spec would
+not say *he sees what others miss*. Orion is present in a plate only through three
+things: **the quail**, **the violet light**, and **someone reacting to it.** The
+render bar above is therefore not temporary — it is the rule. Orion is never drawn.
+
+**Behaviour — slow rotation, one face at a time.** Twelve faces, and the number is
+load-bearing: the Egyptian night is divided into **twelve hours of the Duat**, the
+underworld passage. Each face turned forward is a distinct transmission. Orion is
+never still and never fast — it turns at the rate the night turns.
+
+**Light — it does not emit. It refracts.** Amethyst is transparent quartz; it makes
+no light of its own, it colours what passes through it. Physically, amethyst's
+violet comes from radiation acting on iron in the stone — colour *created by
+something passing through*. So the violet saturating every LAB frame is not Orion
+glowing. **It is ordinary light that went through Orion and came out violet.** The
+palette is not a style choice and not decoration; it is evidence. Every neon tube,
+every armour conduit, every name set in violet type is light that has already been
+through the stone.
+
+**Nature — deliberately unexplained, and treated as infrastructure.** The world's
+stated rule is that Egyptian elements are civic infrastructure: the obelisk is on
+the corner because it has always been on the corner. Orion gets the same treatment.
+Not a god to be worshipped, not a machine to be operated, not an artefact to be
+recovered. It is simply there and always has been. **Nobody in-world asks what
+Orion is** — that is a tourist's question. The canon does not answer it because the
+world does not ask it.
+
+### What this makes Eddie
+
+Everyone in this world lives under the violet light — they are all standing in
+Orion's output and none of them know it. The quail land on everyone's street.
+
+Eddie is the only one who reads them. That is the whole of his gift, and it is why
+he is the Architect: not that he receives something nobody else receives, but that
+he is the only one who noticed the transmission was language.
+
+**Status:** derived 2026-08-21 from locked material, pending Eddie's confirmation.
+One word locks it.
 
 ---
 
@@ -445,6 +480,9 @@ canon. Changes:
    transmits signals Eddie deciphers.
 9. **Quail sightings locked as Orion's manifestation.** The signal reaches the
    street as quail — Gardiner G43, the hieroglyph for *w*. Letters walking loose.
+10. **Orion's form, behaviour and nature derived** from locked material: sky-scale,
+    never rendered, slow twelve-face rotation, refracts rather than emits,
+    deliberately unexplained. Pending confirmation.
 
 **Prior scar tissue retained from the 2026-04-18 canon:**
 
