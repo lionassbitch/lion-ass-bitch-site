@@ -9,17 +9,44 @@ and the skill copy gets rewritten from it.
 
 ---
 
-## THE FIRST LAW — BODY PLAN
+## THE FIRST LAW — TWO REGISTERS
 
-**Every LAB character is ANTHROPOMORPHIC.** Upright, bipedal, humanoid body with
-an animal head and animal hands/feet. They wear real garments cut for a humanoid
-frame.
+LAB renders in two legitimate registers. The mistake is never *that* an animal
+appears — it is using the wrong register for the job.
 
-They are **not** quadrupeds. A LAB character never walks on four legs, never
-appears as a naturalistic animal, and is never rendered as wildlife photography.
+### 1. CHARACTER register — the default
 
-This reverses the direction the production site drifted in. Every quadruped asset
-is now **non-canon** — see *Superseded Assets* at the bottom.
+**Anthropomorphic.** Upright, bipedal, humanoid body with an animal head and
+animal hands/feet, wearing real garments cut for a humanoid frame.
+
+This is Pryde, Kickz and Anput **as people**. Any frame where they act, wear,
+speak, hold, stand with, or are named as characters is this register. Posters,
+scenes, campaigns, dossiers, narrative, wardrobe — all character register.
+
+If a frame is doing character work, it is anthropomorphic. No exceptions.
+
+### 2. PRIMAL register — the animal as animal
+
+**Naturalistic quadruped.** Real animal anatomy, four legs, no clothing, no
+jewellery, no wardrobe. Daylight and natural settings are fully in bounds here —
+savanna, field, stone, open sky.
+
+This is the totem, the emblem, the nature-state, the origin image. The lion as a
+lion, not as Pryde in a costume.
+
+### The line between them
+
+Ask: **is the frame presenting the animal AS the character, or as the animal?**
+
+- Animal *as the character* — standing in for Pryde in a scene, wearing his gold,
+  walking his city, captioned with his name → **wrong.** That is character work
+  done in the wrong register, and it is exactly the drift that reached the site.
+- Animal *as the animal* — totem, crest, emblem, primal/origin imagery, nature
+  documentary register → **right.** Fully canon.
+
+A naturalistic animal never wears LAB wardrobe and never carries a character
+nameplate. The moment it does, it has crossed into character register and must be
+anthropomorphic instead.
 
 ---
 
@@ -116,10 +143,10 @@ agree with each other. In descending authority:
    Bronx-is-the-Pyramid, current wardrobe. Use these.
 2. **`{character}_hero_canonical`** (2026-04-18) — anthropomorphic, correct body
    plan, **retired wardrobe**. Identity conditioning only. Never for wardrobe.
-3. **`{character}_primal_canonical`** (2026-06-13) — **NON-CANON.** Naturalistic
-   daylight quadrupeds. This family is what pulled the production site off-model.
-   Never feed it. It is only still named `canonical` because renaming someone's
-   live assets needs a decision, not an assumption — see *Superseded Assets*.
+3. **`{character}_primal_canonical`** (2026-06-13) — **CANON, PRIMAL REGISTER.**
+   Naturalistic daylight quadrupeds. Valid and correct for primal/totem/emblem
+   work. Never feed them for character work — that substitution is what pulled the
+   production site off-model. Right assets, wrong job.
 
 The related `{character}_motion_canonical`, `_action_canonical` and
 `_closeup_canonical` sets (2026-04-23) are video-reference derivatives of family 2
@@ -265,9 +292,10 @@ sigil-styled. Never on a photoreal plate.
 Four reference posters (Pryde, Kickz, Anput, Eddie Colón) submitted and locked as
 canon. Changes:
 
-1. **Body plan reversed to anthropomorphic.** The production site had drifted to
-   quadruped animals across every asset. Anthropomorphic is now law without
-   exception.
+1. **Two registers defined.** Character work is anthropomorphic without exception.
+   Primal work — the animal as animal, daylight and natural settings included — is
+   equally canon. Amended same day: the first draft banned naturalistic animals
+   outright, which was too broad. The rule is register discipline, not a ban.
 2. **World named and locked** — "Bronx is the Pyramid." Previously the environment
    was loose "Bronx Mythic" atmosphere; it is now a specific, consistent city.
 3. **Palette shifted violet-dominant.** Magenta demoted to site-UI-only.
@@ -293,7 +321,12 @@ canon. Changes:
 
 ## Superseded Assets
 
-Every one of these is **non-canon as of 2026-08-21** — all quadruped:
+These are **off-canon as of 2026-08-21** — not because they contain animals, but
+because each uses a naturalistic animal **in the character role**: standing in for
+Pryde, Kickz or Anput, carrying their names, wearing their gold, walking their
+city. That is character work, and character work is anthropomorphic.
+
+Re-shooting them means re-shooting them as characters, not deleting the animals:
 
 | Asset | Where it is used |
 |---|---|
@@ -308,7 +341,7 @@ Every one of these is **non-canon as of 2026-08-21** — all quadruped:
 They remain live on the site until replaced. Regenerating them against this canon
 is the outstanding work.
 
-### Cloudinary — the quadruped source
+### Cloudinary primal set — KEEP, do not archive
 
 | Asset | Note |
 |---|---|
@@ -316,12 +349,10 @@ is the outstanding work.
 | `kickz_primal_canonical` | 2026-06-13, 1664x2496 PNG, `LAB/characters/kickz` |
 | `khemetz_primal_canonical` | 2026-06-13, 1664x2496 PNG, `LAB/characters/khemetz` |
 
-Verified quadruped: naturalistic daylight wildlife portraits with a LAB badge.
-Dated between the 2026-04-18 canon and the 2026-07-21 site refresh, which makes
-this family the most likely origin of the drift.
+Naturalistic daylight wildlife portraits with a LAB badge. **These are canon** —
+they are the reference set for the primal register, and they are correct at what
+they do.
 
-**They still carry `canonical` in their public_id, which is a live trap** — any
-tool or session searching for canonical refs can pick them up and re-drift. The
-fix under this canon's own naming discipline is a rename to
-`archive_{character}_primal`. Not done yet: renaming live assets can break
-references outside this repo, so it needs Eddie's explicit go-ahead.
+They are not superseded and must not be archived. What went wrong was never these
+images; it was feeding them into character work, where the anthropomorphic form
+was required.
