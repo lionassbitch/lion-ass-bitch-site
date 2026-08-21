@@ -128,6 +128,7 @@ older Flux identity heroes on wardrobe, world and framing.
 | Kickz | `docs/canon/kickz_poster_canonical.webp` | `https://res.cloudinary.com/drd16h5hl/image/upload/v1787347542/kickz_poster_canonical.webp` |
 | Khemetz / Anput | `docs/canon/anput_poster_canonical.webp` | `https://res.cloudinary.com/drd16h5hl/image/upload/v1787347542/anput_poster_canonical.webp` |
 | Eddie Colón | `docs/canon/eddie_poster_canonical.webp` | `https://res.cloudinary.com/drd16h5hl/image/upload/v1787347543/eddie_poster_canonical.webp` |
+| Eddie Colón — identity | 🟡 pending | `eddie_avatar_canonical` — slot reserved, Google Flow avatar not yet supplied |
 
 1024x1536 (2:3), webp q92. Held in two places on purpose: the repo copy survives
 independently of any CDN or account, the Cloudinary copy is what generation tools
@@ -260,6 +261,24 @@ course. The old "use sparingly, in-frame Eddie is rare" rule is retired.
 
 He is a real person. Render him with documentary-portrait honesty — real skin
 texture, real asymmetry, no idealization and no de-aging.
+
+### Reference Layers — two, split by job
+
+Eddie runs the same two-layer setup as the rest of the lineup.
+
+| Layer | Asset | Holds | Status |
+|---|---|---|---|
+| **Identity anchor** | `eddie_avatar_canonical` | The face. Fed for **every** render of him. | 🟡 **PENDING** — the Google Flow avatar, not yet supplied |
+| **Wardrobe + world plate** | `eddie_poster_canonical` | `ARCHITECT_COAT`, Bronx-is-the-Pyramid framing | ✅ approved 2026-08-21 |
+
+This mirrors the animals: `hero_canonical` holds the face, `poster_canonical`
+holds the fit. Feed both together — the avatar keeps him *him*, the poster keeps
+him dressed and in the right city.
+
+**Until the avatar lands, the poster carries both jobs alone.** It is a full-body
+plate where his head is a small share of the frame, so face fidelity is the weak
+point in any render of him right now. Getting the Flow avatar uploaded is the
+single highest-value outstanding item for his renders.
 
 ### Wardrobe Preset — `ARCHITECT_COAT` ✅ canonical
 
