@@ -128,7 +128,7 @@ older Flux identity heroes on wardrobe, world and framing.
 | Kickz | `docs/canon/kickz_poster_canonical.webp` | `https://res.cloudinary.com/drd16h5hl/image/upload/v1787347542/kickz_poster_canonical.webp` |
 | Khemetz / Anput | `docs/canon/anput_poster_canonical.webp` | `https://res.cloudinary.com/drd16h5hl/image/upload/v1787347542/anput_poster_canonical.webp` |
 | Eddie Colón | `docs/canon/eddie_poster_canonical.webp` | `https://res.cloudinary.com/drd16h5hl/image/upload/v1787347543/eddie_poster_canonical.webp` |
-| Eddie Colón — identity | 🟡 pending | `eddie_avatar_canonical` — slot reserved, Google Flow avatar not yet supplied |
+| Eddie Colón — identity | `docs/canon/eddie_reference_sheet_canonical.webp` | `https://res.cloudinary.com/drd16h5hl/image/upload/v1787348140/eddie_reference_sheet_canonical.webp` |
 
 1024x1536 (2:3), webp q92. Held in two places on purpose: the repo copy survives
 independently of any CDN or account, the Cloudinary copy is what generation tools
@@ -253,11 +253,34 @@ course. The old "use sparingly, in-frame Eddie is rare" rule is retired.
 
 ### Anchor Traits (LOCKED)
 
-> A real man — Puerto Rican, Bronx, mid-thirties, medium build, medium-light skin.
-> Coiled curly hair worn short and full on top with blond-lightened tips, tapered
-> and faded at the sides. Mustache and a light trimmed beard. Steady, level gaze
-> straight down the lens. Grounded, unhurried stance — hands in his coat pockets,
-> shoulders easy, entirely at home on the street.
+> A real man — Puerto Rican, Bronx, 38, 5'9" (175 cm), athletic and lean, light
+> brown skin, brown eyes. Curly hair worn short and full on top, blonde on top over
+> dark roots, tapered and faded at the sides. Mustache and a light trimmed beard.
+> Steady, level gaze straight down the lens. Grounded, unhurried stance — shoulders
+> easy, entirely at home on the street.
+
+**Role:** Founder / Visionary. **Allegiance:** Exsuvera / LAB.
+
+### Distinguishing Marks (LOCKED)
+
+Real tattoos. Render them; they are identity, not decoration.
+
+| Mark | Placement |
+|---|---|
+| Eagle with shield | Upper chest, left |
+| Ornate cross | Upper chest, right |
+| `TRUST` in serif caps | Right collarbone |
+| `VIII·XI` Roman numerals | Left collarbone |
+| Dove over `LOYALTY` | Right side of neck |
+
+### Bearing
+
+Grounded leader. Strategic and observant. Builder and creator. Carries the future
+on his shoulders. Calm intensity, quiet authority.
+
+**NOT CANON — do not render:** the wireless earbud visible in all three views of
+the reference sheet is a shoot artifact. Models will happily reproduce it. Exclude
+it explicitly in every prompt.
 
 He is a real person. Render him with documentary-portrait honesty — real skin
 texture, real asymmetry, no idealization and no de-aging.
@@ -268,17 +291,19 @@ Eddie runs the same two-layer setup as the rest of the lineup.
 
 | Layer | Asset | Holds | Status |
 |---|---|---|---|
-| **Identity anchor** | `eddie_avatar_canonical` | The face. Fed for **every** render of him. | 🟡 **PENDING** — the Google Flow avatar, not yet supplied |
+| **Identity anchor** | `eddie_reference_sheet_canonical` | The face, from three angles. Fed for **every** render of him. | ✅ approved 2026-08-21 |
 | **Wardrobe + world plate** | `eddie_poster_canonical` | `ARCHITECT_COAT`, Bronx-is-the-Pyramid framing | ✅ approved 2026-08-21 |
 
 This mirrors the animals: `hero_canonical` holds the face, `poster_canonical`
 holds the fit. Feed both together — the avatar keeps him *him*, the poster keeps
 him dressed and in the right city.
 
-**Until the avatar lands, the poster carries both jobs alone.** It is a full-body
-plate where his head is a small share of the frame, so face fidelity is the weak
-point in any render of him right now. Getting the Flow avatar uploaded is the
-single highest-value outstanding item for his renders.
+The identity anchor is a **three-view reference sheet** — frontal, profile and
+three-quarter turn on dark seamless, plus a written spec panel. Three angles on a
+clean ground is the strongest face lock available; it beats a single headshot and
+it beats the poster, where his head is a small share of a full-body frame.
+
+Eddie is now the best-referenced character in the canon.
 
 ### Wardrobe Preset — `ARCHITECT_COAT` ✅ canonical
 
