@@ -370,6 +370,22 @@ Until these are answered, **do not render Orion.** A guessed form becomes canon 
 accident the moment it is generated, and this entity has already been mis-filed
 once.
 
+### Quail sightings — UNRESOLVED, recorded verbatim
+
+Eddie, 2026-08-21, immediately after confirming Orion: **"And quail sightings."**
+
+That is the whole of it. Recorded so it is not lost, **not** written as canon,
+because three words do not say whether quail sightings are how Orion's signal
+reaches the street, a separate omen in the mythology, or something else entirely.
+
+**Factual note that may or may not be the point:** the quail chick is a standard
+Egyptian hieroglyph — Gardiner G43, 𓅱 — the uniliteral sign for the sound *w*. In
+a world whose obelisks and armour are covered in glyphs, a live quail on a Bronx
+street is a letter walking around loose. That reading would sit exactly on top of
+Orion transmitting signals a man has to decipher.
+
+Offered as a reading, not a ruling. Pending Eddie.
+
 ---
 
 ## Lineup Formation
