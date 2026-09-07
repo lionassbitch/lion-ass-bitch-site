@@ -35,12 +35,58 @@ SRC = {
     'HERO_01': f'{PKG}/frames/HERO_01.png',
     'HERO_02': f'{PKG}/frames/HERO_02.png',
     'HERO_03': f'{PKG}/frames/HERO_03.png',
+    'BROTHER': f'{PKG}/frames/BROTHER_006.png',
 }
 for i in range(1, 13):
     SRC[f'P{i:02d}'] = f'{PKG}/panels/P{i:02d}.png'
 
 PLATE_CACHE = {}
 ZMAX_PAD = 1.35  # plates rendered with headroom for max zoom
+
+# ---------------------------------------------------------------- motion clips
+# clip key -> directory of frames extracted at 24 fps (clip_<key>/f_%05d.jpg)
+CLIP_DIR = os.path.join(BASE, 'clips')
+CLIP_FRAMES = {}
+
+def clip_frames(key):
+    """sorted frame paths for an extracted clip; empty if absent"""
+    if key in CLIP_FRAMES:
+        return CLIP_FRAMES[key]
+    d = os.path.join(CLIP_DIR, key)
+    fs = sorted(os.path.join(d, f) for f in os.listdir(d)) if os.path.isdir(d) else []
+    CLIP_FRAMES[key] = fs
+    return fs
+
+CLIP_IMG_CACHE = {}
+
+def clip_image(path):
+    """frame as float32 array cover-cropped to the active area (tiny LRU)"""
+    arr = CLIP_IMG_CACHE.get(path)
+    if arr is None:
+        im = Image.open(path).convert('RGB')
+        s = max(AW / im.width, AH / im.height)
+        im = im.resize((int(im.width * s + 0.5), int(im.height * s + 0.5)), Image.BILINEAR)
+        x = (im.width - AW) // 2
+        y = (im.height - AH) // 2
+        arr = np.asarray(im.crop((x, y, x + AW, y + AH)), dtype=np.float32)
+        if len(CLIP_IMG_CACHE) > 6:
+            CLIP_IMG_CACHE.pop(next(iter(CLIP_IMG_CACHE)))
+        CLIP_IMG_CACHE[path] = arr
+    return arr
+
+def clip_frame_blended(key, u):
+    """time-stretched clip frame at normalized position u with crossfade blend"""
+    fs = clip_frames(key)
+    if not fs:
+        return None
+    pos = np.clip(u, 0.0, 1.0) * (len(fs) - 1)
+    i0 = int(pos)
+    i1 = min(i0 + 1, len(fs) - 1)
+    a = pos - i0
+    f0 = clip_image(fs[i0])
+    if i1 == i0 or a < 0.02:
+        return f0.copy()
+    return f0 * (1 - a) + clip_image(fs[i1]) * a
 
 def plate(key):
     """cover-resized plate at ZMAX_PAD * active size"""
@@ -195,8 +241,9 @@ T = [
     (0.0,   6.0, 'card:title', dict(fin=1.6, fout=1.0)),
     (6.0,  16.0, 'HERO_03', dict(z0=1.05, z1=1.20, py0=-0.1, py1=0.15, bright=0.92, fin=1.4, fout=0.8)),
     (16.0, 24.0, 'P02',     dict(z0=1.26, z1=1.08, bright=0.95, fin=0.8, fout=0.6)),
-    (24.0, 33.0, 'HERO_02', dict(z0=1.04, z1=1.22, px0=-0.15, px1=0.35, fin=0.6, fout=0.6)),
-    (33.0, 40.0, 'P03',     dict(z0=1.10, z1=1.32, px0=0.1, px1=0.45, fin=0.6, fout=0.8)),
+    (24.0, 33.0, 'HERO_02', dict(z0=1.04, z1=1.22, px0=-0.15, px1=0.35, fin=0.6, fout=0.6, clip='wall_palm')),
+    (33.0, 36.5, 'BROTHER', dict(z0=1.06, z1=1.16, bright=0.95, fin=0.5, fout=0.5)),
+    (36.5, 40.0, 'P03',     dict(z0=1.20, z1=1.32, px0=0.25, px1=0.45, fin=0.5, fout=0.8)),
     (40.0, 47.0, 'P04',     dict(z0=1.06, z1=1.18, bright=1.06, warmboost=1.35, fin=0.8, fout=0.8)),
     (47.0, 55.0, 'P05',     dict(z0=1.16, z1=1.02, bright=1.03, fin=0.6, fout=0.5)),
     (55.0, 62.0, 'P09',     dict(z0=1.02, z1=1.16, bright=0.98, fin=0.5, fout=0.4)),
@@ -208,14 +255,14 @@ T = [
     (90.0, 94.0, 'P07',     dict(z0=1.24, z1=1.27, bright=0.5, fin=1.0, fout=1.4)),
     (94.0, 96.0, 'black',   dict()),
     # ---- beat drop ----
-    (96.0, 100.0, 'P07',    dict(z0=1.32, z1=1.10, bright=1.06, fx='bloom', fin=0.0, fout=0.4)),
+    (96.0, 100.0, 'P07',    dict(z0=1.32, z1=1.10, bright=1.06, fx='bloom', fin=0.0, fout=0.4, clip='eyes_open')),
     (100.0, 104.0, 'card:amor', dict(fin=0.35, fout=0.35)),
     (104.0, 111.0, 'P08',   dict(z0=1.05, z1=1.18, bright=1.05, warmboost=1.3, fin=0.35, fout=0.3)),
     (111.0, 117.0, 'P09',   dict(z0=1.16, z1=1.04, fin=0.3, fout=0.3)),
     (117.0, 124.0, 'P08',   dict(z0=1.30, z1=1.14, px0=0.35, px1=-0.3, bright=1.04, warmboost=1.3, fin=0.3, fout=0.5)),
     (124.0, 132.0, 'P02',   dict(z0=1.10, z1=1.22, bright=1.10, warmboost=1.5, fin=0.5, fout=0.4)),
-    (132.0, 140.0, 'P10',   dict(z0=1.03, z1=1.18, bright=1.02, fin=0.4, fout=0.6)),
-    (140.0, 152.0, 'P11',   dict(z0=1.14, z1=1.02, bright=1.02, warmboost=1.25, fin=0.8, fout=1.2)),
+    (132.0, 140.0, 'P10',   dict(z0=1.03, z1=1.18, bright=1.02, fin=0.4, fout=0.6, clip='wall_yields')),
+    (140.0, 152.0, 'P11',   dict(z0=1.14, z1=1.02, bright=1.02, warmboost=1.25, fin=0.8, fout=1.2, clip='embrace')),
     (152.0, 158.0, 'HERO_03', dict(z0=1.20, z1=1.08, bright=1.0, fin=0.8, fout=0.6)),
     (158.0, 163.0, 'card:loveeddie', dict(fin=0.5, fout=0.8)),
     (163.0, 171.0, 'HERO_01', dict(z0=1.02, z1=1.16, bright=0.98, fin=0.8, fout=0.6)),
@@ -238,6 +285,20 @@ def render_shot_frame(key, opts, u, tglob, tloc):
         return np.zeros((AH, AW, 3), dtype=np.float32)
     if key.startswith('card:'):
         return CARDS[key[5:]].copy()
+    clip_key = opts.get('clip')
+    if clip_key:
+        fr = clip_frame_blended(clip_key, u)
+        if fr is not None:
+            b = opts.get('bright', 1.0)
+            fr *= b
+            wb = opts.get('warmboost', 1.0)
+            fr *= (1 + (WARM - 1) * wb)
+            if opts.get('fx') == 'bloom' and tloc < 1.0:
+                k = np.exp(-tloc / 0.35) * 210.0
+                fr += BLOOM_MASK * np.array([k, k * 0.8, k * 0.25],
+                                            dtype=np.float32)[None, None, :]
+            return fr
+        # clip missing on disk -> fall through to the still plate
     pl = plate(key)
     z0, z1 = opts.get('z0', 1.05), opts.get('z1', 1.15)
     z = z0 + (z1 - z0) * smoothstep(u)
