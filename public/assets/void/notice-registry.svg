@@ -1,0 +1,17 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 720" role="img" aria-labelledby="nrTitle nrDesc">
+  <title id="nrTitle">The Registry  Notice of Filing</title>
+  <desc id="nrDesc">This address recorded as vacant. No entry. Stamp: Filed.</desc>
+  <rect width="512" height="720" fill="#efe6d4"/>
+  <rect x="18" y="18" width="476" height="684" fill="none" stroke="#1a120c" stroke-width="3"/>
+  <rect x="32" y="32" width="448" height="656" fill="none" stroke="#1a120c" stroke-width="1"/>
+  <text x="256" y="92" text-anchor="middle" font-family="Georgia, Times, serif" font-size="22" font-weight="700" letter-spacing="8" fill="#1a120c">THE REGISTRY</text>
+  <line x1="80" y1="118" x2="432" y2="118" stroke="#1a120c" stroke-width="1"/>
+  <text x="256" y="168" text-anchor="middle" font-family="Georgia, Times, serif" font-size="16" letter-spacing="4" fill="#3a2a1c">NOTICE OF FILING</text>
+  <text x="256" y="280" text-anchor="middle" font-family="Georgia, Times, serif" font-size="20" fill="#1a120c">THIS ADDRESS RECORDED</text>
+  <text x="256" y="314" text-anchor="middle" font-family="Georgia, Times, serif" font-size="20" fill="#1a120c">AS VACANT</text>
+  <text x="256" y="380" text-anchor="middle" font-family="Georgia, Times, serif" font-size="28" font-weight="700" letter-spacing="10" fill="#1a120c">NO ENTRY</text>
+  <g transform="translate(256 560) rotate(-18)">
+    <circle r="86" fill="none" stroke="#c1121f" stroke-width="8"/>
+    <text x="0" y="14" text-anchor="middle" font-family="Impact, Arial Black, sans-serif" font-size="36" letter-spacing="6" fill="#c1121f">FILED</text>
+  </g>
+</svg>

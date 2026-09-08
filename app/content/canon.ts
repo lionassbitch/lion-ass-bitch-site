@@ -138,6 +138,11 @@ export const exsuvera = {
       title: "Voguejitsu",
       blurb: "Presence is power. A performance discipline where survival becomes style.",
     },
+    {
+      href: "/void",
+      title: "Registry Void",
+      blurb: "A cinematic 3D filing — rainy street, Door 22, crystals, VOID city.",
+    },
   ],
 };
 

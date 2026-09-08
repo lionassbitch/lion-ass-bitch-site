@@ -19,6 +19,7 @@ export default function sitemap(): MetadataRoute.Sitemap {
     "/contact",
     "/labrynth",
     "/voguejitsu",
+    "/void",
   ].map((path) => ({
     url: `${BASE}${path}`,
     changeFrequency: "weekly" as const,

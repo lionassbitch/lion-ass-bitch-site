@@ -84,6 +84,15 @@ export function buildPageIndex(): PageRecord[] {
       kind: "Institution",
       keywords: "sitemap index directory map everything navigation",
     },
+    {
+      href: "/void",
+      title: "Registry Void",
+      summary:
+        "A scroll-reactive 3D filing: rainy street, Door 22, crystal descent, VOID city.",
+      kind: "Institution",
+      keywords:
+        "void registry scroll 3d alley door 22 crystals pyramid city cinematic noir",
+    },
   ];
 
   for (const dossier of dossiers) {

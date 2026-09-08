@@ -19,7 +19,7 @@ resilient fallback.
 ```bash
 npm install
 npm run build      # production build (vinext → Nitro)
-npm test           # build + verification suite (8 tests)
+npm test           # build + verification suite (9 tests)
 npm run lint       # eslint (0 errors)
 npx tsc --noEmit   # type check (clean)
 ```
@@ -60,6 +60,9 @@ app/
     characters.ts         Character dossiers (Pryde / Kickz / Khemetz).
     canon.ts              Creed, Mythos chapters, Exsuvera studio, Founder.
     frequency.ts          Transmissions (editorial dispatches).
+    void.ts               Registry Void chapter map, notices, side-beat windows.
+
+  void/                   Dedicated /void experience (R3F canvas + HUD + a11y).
 
   components/
     SiteHeader.tsx        Responsive nav, mobile drawer, active-link state.
@@ -74,7 +77,7 @@ app/
 
   Routes: /  /archive  /archive/[handle]  /creed  /mythos  /dossiers
           /dossiers/[slug]  /frequency  /frequency/[slug]  /exsuvera
-          /founder  /contact  /labrynth  /search  /voguejitsu
+          /founder  /contact  /labrynth  /search  /voguejitsu  /void
           + sitemap.ts, robots.ts, not-found.tsx
 ```
 
@@ -91,6 +94,63 @@ all derived from these — edit the data, every surface updates:
   `/frequency/[slug]`.
 - **Relics** (`lib/catalog.ts`) are the live Shopify catalog, mapped to a shared
   `Relic` type used by home, `/archive`, `/archive/[handle]`, and `/search`.
+- **Registry Void** (`void.ts`) powers `/void` — chapter map, HUD copy, and the
+  accessible written record for the scroll-reactive 3D filing.
+
+## Registry Void (`/void`)
+
+A dedicated cinematic route. The live storefront, archive, and cart flows are
+unchanged. Primary nav stays tight; the filing is indexed from LABrynth, Exsuvera,
+search, and the sitemap.
+
+### Chapter map
+
+Scroll (or the reduced-motion stills) is the camera. Progress is a single 0–1
+path with `VOID_SCROLL_PAGES` (6) of travel:
+
+| Code | Scroll | Scene | What you should read |
+| --- | --- | --- | --- |
+| K1 | `0.00–0.28` | Rainy street | Wet brick alley, fire escapes, amber lamps, purple glow at the vanishing point. Camera walks the street. |
+| K2 | `0.28–0.48` | Door 22 | Door marked **22**. Notice: THE REGISTRY / NOTICE OF FILING / THIS ADDRESS RECORDED AS VACANT / NO ENTRY, red **FILED**. Trash bags. Purple light under the door. Pass through. |
+| K3 | `0.48–0.74` | Crystal descent | Stone stairs, purple crystals, glyphs, bright violet depth. Descend. |
+| K4 | `0.74–1.00` | VOID city | Cave exit, **VOID** stamp, dark pyramid, gothic-futurist spires, searchlights. Reveal the vista. |
+
+Chapter data lives in `app/content/void.ts` (`voidChapters`, `getChapterAt`).
+The 3D world is `app/void/RegistryVoidWorld.tsx` (React Three Fiber +
+`@react-three/drei` `ScrollControls` / `useScroll`). Board-faithful plates use
+existing LAB photography as textures plus generated notice canvases.
+
+### Accessibility
+
+- Skip links: root “Skip to content” and an on-route **Skip 3D journey** /
+  **Skip to written record** targeting `#void-record`.
+- Keyboard: arrows, page keys, Home/End, and space (when focus is not on a
+  button/link) move the camera or stills. Chapter markers are real buttons
+  with `aria-current="location"`.
+- `prefers-reduced-motion: reduce` opens the still-chapter alternate. A HUD
+  **Reduce motion** toggle can force either mode.
+- Chapter changes announce through an `aria-live="polite"` region.
+- HUD, skip, and markers use high-contrast cream-on-black panels and the
+  global `focus-visible` gold/signal ring.
+- `#void-record` is a static HTML filing of the same four chapters (plus the
+  Registry notices) so the journey remains readable without WebGL.
+
+### Side beats
+
+`SideBeatSlot` (`app/void/SideBeatSlot.tsx`) is a stub. Reserved windows are
+declared as `voidSideBeats` in `app/content/void.ts`:
+
+```tsx
+import SideBeatSlot from "../void/SideBeatSlot";
+
+<SideBeatSlot id="k1-k2" start={0.24} end={0.32} offset={offset}>
+  {/* later: accessible HTML for the Street → Door 22 beat */}
+</SideBeatSlot>
+```
+
+Without `children` the slot renders nothing. `start` / `end` are inclusive /
+exclusive positions on the same 0–1 scroll path as the chapters. Do not invent
+side copy here — hook content when a beat is actually written.
 
 ## Commerce configuration
 

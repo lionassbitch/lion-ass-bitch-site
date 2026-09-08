@@ -71,6 +71,7 @@ export const siteIndex: { group: string; blurb: string; links: NavLink[] }[] = [
       { href: "/exsuvera", label: "Exsuvera Studios", note: "The parent house" },
       { href: "/voguejitsu", label: "Voguejitsu", note: "A living discipline" },
       { href: "/frequency", label: "Frequency", note: "Transmissions & dispatches" },
+      { href: "/void", label: "Registry Void", note: "Scroll through the filing" },
       { href: "/contact", label: "Contact & Support", note: "Reach the studio" },
     ],
   },

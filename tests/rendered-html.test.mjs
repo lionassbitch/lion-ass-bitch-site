@@ -17,6 +17,7 @@ const appUrl = (p) => new URL(`../app/${p}`, import.meta.url).href;
 const { toRelic, relicCategory, fallbackRelics, RELIC_CATEGORIES, money } =
   await import(appUrl("lib/catalog.ts"));
 const { creed, mythos, exsuvera, founder } = await import(appUrl("content/canon.ts"));
+const { voidChapters, getChapterAt, voidSideBeats } = await import(appUrl("content/void.ts"));
 const { dossiers, getDossier } = await import(appUrl("content/characters.ts"));
 const { transmissions, getTransmission } = await import(appUrl("content/frequency.ts"));
 const { buildPageIndex } = await import(appUrl("lib/search.ts"));
@@ -95,6 +96,25 @@ test("transmissions have unique slugs and resolve", () => {
   }
 });
 
+test("registry void chapter map walks street to VOID city", () => {
+  assert.equal(voidChapters.length, 4);
+  assert.deepEqual(
+    voidChapters.map((chapter) => chapter.id),
+    ["k1", "k2", "k3", "k4"],
+  );
+  assert.equal(voidChapters[0].range[0], 0);
+  assert.equal(voidChapters[3].range[1], 1);
+  assert.equal(getChapterAt(0).title, "Rainy street");
+  assert.equal(getChapterAt(0.3).title, "Door 22");
+  assert.equal(getChapterAt(0.55).title, "Crystal descent");
+  assert.equal(getChapterAt(0.9).title, "VOID city");
+  assert.equal(getChapterAt(1).title, "VOID city");
+  assert.ok(voidSideBeats.length >= 3, "side-beat windows should be stubbed");
+  assert.match(voidChapters[1].record.join(" "), /THE REGISTRY/);
+  assert.match(voidChapters[1].record.join(" "), /FILED/);
+  assert.match(voidChapters[3].record.join(" "), /VOID/);
+});
+
 test("navigation and search index contain only valid internal links", () => {
   const internal = (href) => href.startsWith("/");
   for (const link of primaryNav) {
@@ -108,6 +128,14 @@ test("navigation and search index contain only valid internal links", () => {
   }
   const index = buildPageIndex();
   assert.ok(index.length >= 10, "page index should cover the institution");
+  assert.ok(
+    siteIndex.some((section) => section.links.some((link) => link.href === "/void")),
+    "LABrynth index must include /void",
+  );
+  assert.ok(
+    index.some((record) => record.href === "/void"),
+    "search index must include Registry Void",
+  );
   for (const record of index) {
     assert.ok(record.href.startsWith("/"), `search record must be internal: ${record.href}`);
     assert.ok(record.title && record.summary && record.kind);
