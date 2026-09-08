@@ -1,0 +1,346 @@
+/* Registry Void — immersive HUD + still-chapter alternate.
+   Tokens follow the LAB system (ink / paper / gold / violet). */
+
+.voidPage {
+  --void-ink: #f2e8db;
+  --void-muted: #c9b9c2;
+  --void-paper: #050306;
+  --void-panel: #0a070ce8;
+  --void-line: #ffffff26;
+  --void-gold: #d6a64a;
+  --void-violet: #c08cff;
+  background: var(--void-paper);
+  color: var(--void-ink);
+}
+
+.voidSkip {
+  position: absolute;
+  left: 12px;
+  top: 12px;
+  z-index: 8;
+  padding: 10px 14px;
+  background: var(--void-ink);
+  color: #08070a;
+  font-size: 11px;
+  font-weight: 900;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  transform: translateY(-160%);
+}
+
+.voidSkip:focus,
+.voidSkip:focus-visible {
+  transform: translateY(0);
+}
+
+.voidStage {
+  position: relative;
+  height: calc(100dvh - var(--shell));
+  min-height: 560px;
+  overflow: hidden;
+  background: var(--void-paper);
+}
+
+.voidStage canvas {
+  display: block;
+  width: 100%;
+  height: 100%;
+}
+
+.voidStage__boot {
+  position: absolute;
+  inset: 0;
+  display: grid;
+  place-items: center;
+  margin: 0;
+  color: var(--void-muted);
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+  font-size: 11px;
+}
+
+.voidHud {
+  pointer-events: none;
+  position: absolute;
+  inset: 0;
+  z-index: 5;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  padding: 18px clamp(14px, 3vw, 32px) 22px;
+  background:
+    linear-gradient(180deg, #050306d0 0%, transparent 22%),
+    linear-gradient(0deg, #050306cc 0%, transparent 28%);
+}
+
+.voidHud__top,
+.voidHud__base,
+.voidHud__marker,
+.voidHud__toggle,
+.voidHud__skip {
+  pointer-events: auto;
+}
+
+.voidHud__top {
+  display: grid;
+  grid-template-columns: minmax(120px, 1fr) auto minmax(120px, 1fr);
+  align-items: start;
+  gap: 16px;
+}
+
+.voidHud__chapter {
+  margin: 0;
+  font-family: var(--font-display), Impact, sans-serif;
+  font-size: clamp(1.4rem, 3vw, 2.1rem);
+  letter-spacing: 0.02em;
+  text-transform: uppercase;
+  line-height: 0.9;
+}
+
+.voidHud__chapter span {
+  display: block;
+  margin-bottom: 6px;
+  color: var(--void-gold);
+  font-family: var(--font-body), Arial, sans-serif;
+  font-size: 10px;
+  font-weight: 900;
+  letter-spacing: 0.2em;
+}
+
+.voidHud__markers {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 8px;
+}
+
+.voidHud__marker,
+.voidHud__toggle,
+.voidHud__skip {
+  border: 1px solid var(--void-line);
+  background: var(--void-panel);
+  color: var(--void-ink);
+  cursor: pointer;
+}
+
+.voidHud__marker {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  min-width: 76px;
+  padding: 8px 10px;
+  text-align: left;
+}
+
+.voidHud__marker b {
+  color: var(--void-gold);
+  font-size: 11px;
+  letter-spacing: 0.14em;
+}
+
+.voidHud__marker small {
+  color: var(--void-muted);
+  font-size: 10px;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+}
+
+.voidHud__marker[aria-current="location"] {
+  border-color: var(--void-violet);
+  box-shadow: 0 0 0 1px var(--void-violet);
+}
+
+.voidHud__toggle,
+.voidHud__skip {
+  justify-self: end;
+  align-self: start;
+  padding: 10px 12px;
+  font-size: 10px;
+  font-weight: 900;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+}
+
+.voidHud__toggle[aria-pressed="true"] {
+  background: var(--void-ink);
+  color: #08070a;
+}
+
+.voidHud__copy {
+  max-width: 36rem;
+  pointer-events: none;
+}
+
+.voidHud__kicker {
+  margin: 0 0 8px;
+  color: var(--void-violet);
+  font-size: 10px;
+  font-weight: 900;
+  letter-spacing: 0.2em;
+  text-transform: uppercase;
+}
+
+.voidHud__summary {
+  margin: 0;
+  color: var(--void-ink);
+  font-size: clamp(0.95rem, 1.6vw, 1.15rem);
+  line-height: 1.55;
+  text-shadow: 0 1px 12px #050306;
+}
+
+.voidHud__base {
+  display: flex;
+  justify-content: space-between;
+  gap: 16px;
+  align-items: end;
+}
+
+.voidHud__hint {
+  margin: 0;
+  max-width: 42ch;
+  color: var(--void-muted);
+  font-size: 12px;
+  line-height: 1.45;
+}
+
+.voidHud__progress {
+  pointer-events: none;
+  position: absolute;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  height: 3px;
+  background: #ffffff14;
+}
+
+.voidHud__progress::after {
+  content: "";
+  display: block;
+  width: calc(var(--void-progress, 0) * 100%);
+  height: 100%;
+  background: linear-gradient(90deg, var(--void-gold), var(--void-violet));
+}
+
+.voidStill {
+  height: 100%;
+  overflow: auto;
+  scroll-snap-type: x mandatory;
+  display: grid;
+  grid-auto-flow: column;
+  grid-auto-columns: minmax(78%, 420px);
+  gap: 16px;
+  padding: 88px 18px 110px;
+}
+
+.voidStill__card {
+  scroll-snap-align: center;
+  display: grid;
+  grid-template-rows: 1fr auto;
+  border: 1px solid var(--void-line);
+  background: #0b070f;
+  min-height: 0;
+}
+
+.voidStill__card[data-active="true"] {
+  border-color: var(--void-violet);
+}
+
+.voidStill__hit {
+  display: grid;
+  grid-template-rows: 1fr auto;
+  height: 100%;
+  padding: 0;
+  border: 0;
+  background: transparent;
+  color: inherit;
+  text-align: left;
+  cursor: pointer;
+}
+
+.voidStill__hit img {
+  width: 100%;
+  height: min(42vh, 340px);
+  object-fit: cover;
+}
+
+.voidStill__hit div {
+  padding: 16px 16px 8px;
+}
+
+.voidStill__hit span {
+  color: var(--void-gold);
+  font-size: 10px;
+  font-weight: 900;
+  letter-spacing: 0.18em;
+  margin-right: 8px;
+}
+
+.voidStill__hit h2 {
+  margin: 8px 0 10px;
+  font-size: clamp(2rem, 6vw, 3.4rem);
+}
+
+.voidStill__notice {
+  width: min(180px, 40%);
+  margin: 0 16px 16px auto;
+  background: #efe6d4;
+}
+
+.voidRecord {
+  border-top: 1px solid var(--line);
+}
+
+.voidRecord__notice {
+  display: flex;
+  gap: 18px;
+  flex-wrap: wrap;
+  margin-top: 18px;
+}
+
+.voidRecord__notice img {
+  width: 140px;
+  background: #efe6d4;
+}
+
+body[data-void="true"] {
+  background: #050306;
+}
+
+body[data-void="true"] .siteHeader {
+  background: #050306e8;
+}
+
+.voidHud__marker:focus-visible,
+.voidHud__toggle:focus-visible,
+.voidHud__skip:focus-visible,
+.voidStill__hit:focus-visible,
+.voidSkip:focus-visible {
+  outline: 2px solid var(--void-gold);
+  outline-offset: 3px;
+}
+
+@media (max-width: 820px) {
+  .voidHud__top {
+    grid-template-columns: 1fr;
+  }
+
+  .voidHud__toggle,
+  .voidHud__markers {
+    justify-self: start;
+  }
+
+  .voidHud__copy {
+    display: none;
+  }
+
+  .voidHud__base {
+    flex-direction: column;
+    align-items: start;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .voidHud__progress::after {
+    transition: none;
+  }
+}
