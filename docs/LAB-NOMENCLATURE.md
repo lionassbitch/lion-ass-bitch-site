@@ -182,10 +182,38 @@ user builds EXSUVERA by scrolling, the same gesture the word describes.
    JavaScript on scroll, search engines see a blank gate and the origin story
    indexes as nothing.
 
-Implemented in this repo: `app/components/ScrollReveal.tsx` (IntersectionObserver
-fade-on-entry, flags `data-js` on mount so copy is only hidden when JS can
-reveal it), `app/exsuvera/page.tsx` (beats, sticky stack, sticky ENTER), and the
-`exsuveraReveal` / `exsuveraBeat` rules in `app/system.css`.
+Implemented in this repo: `app/components/WordReveal.tsx` (beats, sticky
+stack, sticky exit CTA) over `app/components/ScrollReveal.tsx`
+(IntersectionObserver fade-on-entry, flags `data-js` on mount so copy is only
+hidden when JS can reveal it), and the `wordReveal` / `revealBeat` rules in
+`app/system.css`.
+
+---
+
+## LION ASS BITCH — SCROLL REVEAL (14 BEATS)
+
+**If Exsuvera gets stuck, so does Lion Ass Bitch.** The crown phrase assembles
+on the same mechanics: LION pins, ASS lands beneath it, BITCH lands last, and
+the three close into one title. Same 14-beat structure, same sticky stack,
+same rules. Opens THE NAME on `/mythos#the-name-reveal`; data in
+`lionAssBitchName`.
+
+| Beat | Copy |
+|---|---|
+| 1 | Lion Ass Bitch. |
+| 2 | Three words. Three animals. Three ranks. |
+| 3 | **LION** / Sovereign Will. Moves first. Asks questions later. |
+| 4 | **ASS** / Stubborn Truth. Holds. Will not walk into what it hasn't checked. |
+| 5 | **BITCH** / Sacred Guardian. Guards the den, and what's hers. |
+| 6 | **LION · ASS · BITCH** |
+| 7 | Say it out loud and notice where your voice lands: on LION. / The other two words push it forward. |
+| 8 | Read the way it's built — not the way it sounds in a hallway — / it's a title, not an insult. |
+| 9 | It's also a system. / Lion moves. Ass holds. Bitch guards. |
+| 10 | Most people get one of the three / and call it a personality. |
+| 11 | We didn't clean the words up. We restored them. / Put the lion in front and the whole phrase flips. |
+| 12 | **LION ASS BITCH** / The exact sentence somebody spits at you becomes the rank you carry. |
+| 13 | It isn't a brand. It's a warning — / to the world, that you're coming, / and to yourself, that you're done lying. |
+| 14 | Be the lion, not the liar. / `[ WEAR THE WARNING ]` |
 
 ---
 
@@ -226,6 +254,8 @@ contradicts word one.
 
 ## Revision Log
 
+- **2026-09-18** — Added the matching LION ASS BITCH scroll reveal; the two
+  names now share one component and one beat structure.
 - **2026-09-18** — Brought in from the nomenclature chat thread: THE NAME
   block, the EXSUVERA PRESENTS coined-word block (v2, "the molt" not "the
   shell"), the 14-beat scroll reveal, build spec, page order, and open flags.

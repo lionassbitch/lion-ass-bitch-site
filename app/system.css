@@ -876,15 +876,15 @@
   }
 }
 
-/* EXSUVERA — scroll reveal on /exsuvera ------------------------------------ */
+/* WORD REVEAL — a name assembling on scroll (/exsuvera, /mythos) ----------- */
 /* Native scrolling with fade-on-entry only. Copy is in the HTML at load; it is
    hidden only once JavaScript has mounted (data-js) and can reveal it again. */
-.exsuveraReveal__section {
+.wordReveal__section {
   position: relative;
   border-bottom: 1px solid var(--line);
   background: linear-gradient(180deg, var(--paper) 0%, var(--paper-3) 50%, var(--paper) 100%);
 }
-.exsuveraBeat {
+.revealBeat {
   position: relative;
   display: grid;
   place-items: center;
@@ -892,23 +892,23 @@
   padding: 0 var(--pad);
   text-align: center;
 }
-.exsuveraBeat__copy {
+.revealBeat__copy {
   max-width: 34ch;
 }
-.exsuveraBeat__line {
+.revealBeat__line {
   margin: 0;
   color: #d8cfd6;
   font-size: clamp(1.25rem, 2.6vw, 2rem);
   line-height: 1.45;
 }
-.exsuveraReveal__section > .exsuveraBeat:first-of-type .exsuveraBeat__line {
+.wordReveal__section > .revealBeat:first-of-type .revealBeat__line {
   font-family: var(--font-display), Impact, sans-serif;
   font-size: clamp(2.2rem, 5vw, 4.2rem);
   line-height: 1;
   text-transform: uppercase;
   letter-spacing: -0.02em;
 }
-.exsuveraBeat__word {
+.revealBeat__word {
   margin: 0;
   font-family: var(--font-display), Impact, sans-serif;
   font-size: clamp(4.5rem, 14vw, 12rem);
@@ -916,17 +916,17 @@
   letter-spacing: -0.03em;
   text-transform: uppercase;
 }
-.exsuveraBeat__gloss {
+.revealBeat__gloss {
   margin: 16px 0 0;
   color: var(--muted);
   font-size: clamp(1rem, 1.6vw, 1.25rem);
   letter-spacing: 0.02em;
 }
-.exsuveraBeat--word .exsuveraBeat__word,
-.exsuveraBeat--payoff .exsuveraBeat__word {
+.revealBeat--word .revealBeat__word,
+.revealBeat--payoff .revealBeat__word {
   color: var(--gold);
 }
-.exsuveraBeat--payoff .exsuveraBeat__gloss {
+.revealBeat--payoff .revealBeat__gloss {
   margin-top: 26px;
   color: var(--ink);
   font-family: var(--font-display), Impact, sans-serif;
@@ -935,7 +935,7 @@
   text-transform: uppercase;
   letter-spacing: -0.01em;
 }
-.exsuveraBeat__cta {
+.revealBeat__cta {
   margin-top: 40px;
 }
 
@@ -943,30 +943,30 @@
    all three copies share the stack as their sticky containing block: EX pins
    at 22svh and holds when SU arrives one viewport later; SU pins beneath it;
    VERA lands last. The stack then scrolls out as one and beat 6 closes them up. */
-.exsuveraReveal__stack {
+.wordReveal__stack {
   position: relative;
   padding: 22svh var(--pad) 40svh;
   text-align: center;
 }
-.exsuveraReveal__stack .exsuveraBeat {
+.wordReveal__stack .revealBeat {
   display: contents;
 }
-.exsuveraReveal__stack .exsuveraBeat__copy {
+.wordReveal__stack .revealBeat__copy {
   position: sticky;
   top: calc(22svh + var(--stack, 0) * clamp(5.4rem, 15vw, 13rem));
   margin: 0 auto;
   padding-bottom: 8px;
 }
-.exsuveraReveal__stack .exsuveraBeat:not(:first-child) .exsuveraBeat__copy {
+.wordReveal__stack .revealBeat:not(:first-child) .revealBeat__copy {
   margin-top: 100svh;
 }
-.exsuveraReveal__stack .exsuveraBeat__gloss {
+.wordReveal__stack .revealBeat__gloss {
   margin-top: 6px;
 }
 
 /* Sticky ENTER, corner of the viewport from beat 2 onward. Zero height so it
    never shifts layout; it releases when the reveal section scrolls out. */
-.exsuveraReveal__stickyCta {
+.wordReveal__stickyCta {
   position: sticky;
   top: calc(100svh - 92px);
   z-index: 5;
@@ -975,7 +975,7 @@
   justify-content: flex-end;
   padding-right: var(--pad);
 }
-.exsuveraReveal__stickyCta .btn {
+.wordReveal__stickyCta .btn {
   background: color-mix(in srgb, var(--paper) 80%, transparent);
   backdrop-filter: blur(10px);
 }

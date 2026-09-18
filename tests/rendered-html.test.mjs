@@ -16,9 +16,8 @@ const appUrl = (p) => new URL(`../app/${p}`, import.meta.url).href;
 
 const { toRelic, relicCategory, fallbackRelics, RELIC_CATEGORIES, money } =
   await import(appUrl("lib/catalog.ts"));
-const { creed, mythos, exsuvera, founder, theName, exsuveraName } = await import(
-  appUrl("content/canon.ts")
-);
+const { creed, mythos, exsuvera, founder, theName, exsuveraName, lionAssBitchName } =
+  await import(appUrl("content/canon.ts"));
 const { voidChapters, getChapterAt, voidSideBeats } = await import(appUrl("content/void.ts"));
 const { dossiers, getDossier } = await import(appUrl("content/characters.ts"));
 const { transmissions, getTransmission } = await import(appUrl("content/frequency.ts"));
@@ -96,6 +95,19 @@ test("the nomenclature carries three ranks and the coined word assembles", () =>
   assert.equal(exsuveraName.beats.at(-1).kind, "close");
   assert.ok(exsuveraName.beats.some((beat) => beat.lines.includes(exsuveraName.payoff)));
   assert.ok(exsuveraName.cta.href.startsWith("/"));
+
+  // If Exsuvera assembles on scroll, so does the crown phrase — same mechanics.
+  assert.equal(lionAssBitchName.beats.length, exsuveraName.beats.length);
+  assert.deepEqual(
+    lionAssBitchName.beats.filter((beat) => beat.kind === "part").map((beat) => beat.lines[0]),
+    ["LION", "ASS", "BITCH"],
+  );
+  assert.deepEqual(
+    lionAssBitchName.beats.map((beat) => beat.kind),
+    exsuveraName.beats.map((beat) => beat.kind),
+    "both reveals share one beat structure",
+  );
+  assert.ok(lionAssBitchName.cta.href.startsWith("/"));
 });
 
 test("the bloodline has three unique dossiers with full records", () => {

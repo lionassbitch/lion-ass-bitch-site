@@ -1,7 +1,7 @@
 // A lightweight, content-derived search index over the institution's canon
 // pages (relics are searched separately from the live catalog).
 import { dossiers } from "../content/characters";
-import { creed, mythos, exsuvera, theName, exsuveraName } from "../content/canon";
+import { creed, mythos, exsuvera, theName, exsuveraName, lionAssBitchName } from "../content/canon";
 import { transmissions } from "../content/frequency";
 
 export type PageRecord = {
@@ -144,6 +144,16 @@ export function buildPageIndex(): PageRecord[] {
       keywords: `nomenclature name naming meaning rank ${word.word} ${word.verb} ${word.archetype.name} ${word.body.join(" ")}`,
     });
   }
+
+  records.push({
+    href: "/mythos#the-name-reveal",
+    title: "Lion Ass Bitch — the name, assembled",
+    summary: lionAssBitchName.payoff,
+    kind: "Nomenclature",
+    keywords: `lion ass bitch name reveal title rank ${lionAssBitchName.parts
+      .map((part) => `${part.syllable} ${part.gloss}`)
+      .join(" ")} ${lionAssBitchName.closing}`,
+  });
 
   records.push({
     href: "/exsuvera#the-word",

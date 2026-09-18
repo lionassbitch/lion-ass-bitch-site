@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import Link from "next/link";
-import { mythos, theName } from "../content/canon";
+import { mythos, theName, lionAssBitchName } from "../content/canon";
+import WordReveal from "../components/WordReveal";
 import { dossiers } from "../content/characters";
 
 export const metadata: Metadata = {
@@ -42,6 +43,14 @@ export default function MythosPage() {
           ))}
         </div>
       </section>
+
+      <WordReveal
+        id="the-name-reveal"
+        title="Lion Ass Bitch — the name, assembled"
+        beats={lionAssBitchName.beats}
+        cta={lionAssBitchName.cta}
+        enterLabel="Archive"
+      />
 
       <section className="section section--edge wrap theName" id="the-name" aria-labelledby="the-name-title">
         <p className="eyebrow">The Name / {theName.kicker}</p>

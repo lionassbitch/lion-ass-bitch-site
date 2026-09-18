@@ -1,8 +1,7 @@
 import type { Metadata } from "next";
-import { Fragment } from "react";
 import Link from "next/link";
-import { exsuvera, exsuveraName, type RevealBeat } from "../content/canon";
-import ScrollReveal from "../components/ScrollReveal";
+import { exsuvera, exsuveraName } from "../content/canon";
+import WordReveal from "../components/WordReveal";
 
 export const metadata: Metadata = {
   title: "Exsuvera Studios",
@@ -10,56 +9,6 @@ export const metadata: Metadata = {
     "Exsuvera is the parent studio behind Lion Ass Bitch — a creative laboratory building mythology-first brands, disciplines, and cinematic worlds.",
   alternates: { canonical: "/exsuvera" },
 };
-
-type Segment = { kind: "flow" | "stack"; beats: RevealBeat[] };
-
-// Group the beats so the three syllables share one sticky container.
-const revealSegments: Segment[] = exsuveraName.beats.reduce<Segment[]>((segments, beat) => {
-  const kind: Segment["kind"] = beat.kind === "part" ? "stack" : "flow";
-  const last = segments[segments.length - 1];
-  if (last && last.kind === kind) last.beats.push(beat);
-  else segments.push({ kind, beats: [beat] });
-  return segments;
-}, []);
-
-function RevealBeatBlock({
-  beat,
-  style,
-  children,
-}: {
-  beat: RevealBeat;
-  style?: React.CSSProperties;
-  children?: React.ReactNode;
-}) {
-  const [lead, ...rest] = beat.lines;
-  const isDisplay = beat.kind === "part" || beat.kind === "word" || beat.kind === "payoff";
-  return (
-    <div className={`exsuveraBeat exsuveraBeat--${beat.kind}`} style={style}>
-      <div className="exsuveraBeat__copy" data-reveal>
-        {isDisplay ? (
-          <>
-            <p className="exsuveraBeat__word">{lead}</p>
-            {rest.map((line, index) => (
-              <p className="exsuveraBeat__gloss" key={index}>
-                {line}
-              </p>
-            ))}
-          </>
-        ) : (
-          <p className="exsuveraBeat__line">
-            {beat.lines.map((line, index) => (
-              <span key={index}>
-                {line}
-                {index < beat.lines.length - 1 ? <br /> : null}
-              </span>
-            ))}
-          </p>
-        )}
-        {children}
-      </div>
-    </div>
-  );
-}
 
 export default function ExsuveraPage() {
   return (
@@ -76,50 +25,12 @@ export default function ExsuveraPage() {
         </div>
       </header>
 
-      <ScrollReveal className="exsuveraReveal">
-        <section id="the-word" className="exsuveraReveal__section" aria-labelledby="the-word-title">
-          <h2 id="the-word-title" className="visually-hidden">
-            Exsuvera — the coined word, taken apart
-          </h2>
-          {revealSegments.map((segment, index) =>
-            segment.kind === "stack" ? (
-              // Beats 3–5: each syllable pins as it arrives and stays while the
-              // next one lands, then the whole stack releases into beat 6.
-              <div className="exsuveraReveal__stack" key={`stack-${index}`}>
-                {segment.beats.map((beat, stackIndex) => (
-                  <RevealBeatBlock
-                    beat={beat}
-                    key={beat.index}
-                    style={{ "--stack": stackIndex } as React.CSSProperties}
-                  />
-                ))}
-              </div>
-            ) : (
-              segment.beats.map((beat) => (
-                <Fragment key={beat.index}>
-                  {beat.index === 2 ? (
-                    // Sticky ENTER from beat 2 onward: anyone already sold can
-                    // leave early. The reveal must never cost the click. Sits
-                    // in flow (zero height) so it releases with the section.
-                    <div className="exsuveraReveal__stickyCta">
-                      <Link className="btn btn--ghost" href={exsuveraName.cta.href}>
-                        Enter <span aria-hidden="true">→</span>
-                      </Link>
-                    </div>
-                  ) : null}
-                  <RevealBeatBlock beat={beat}>
-                  {beat.kind === "close" ? (
-                    <Link className="btn btn--solid exsuveraBeat__cta" href={exsuveraName.cta.href}>
-                      {exsuveraName.cta.label} <span aria-hidden="true">→</span>
-                    </Link>
-                  ) : null}
-                  </RevealBeatBlock>
-                </Fragment>
-              ))
-            ),
-          )}
-        </section>
-      </ScrollReveal>
+      <WordReveal
+        id="the-word"
+        title="Exsuvera — the coined word, taken apart"
+        beats={exsuveraName.beats}
+        cta={exsuveraName.cta}
+      />
 
       <section className="section wrap">
         <p className="eyebrow">The method</p>

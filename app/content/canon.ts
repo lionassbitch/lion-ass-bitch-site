@@ -253,6 +253,74 @@ export const exsuveraName = {
   cta: { label: "Enter LionAssBitch.com", href: "/" },
 };
 
+// LION ASS BITCH — the same reveal, the same gesture. If Exsuvera assembles
+// as you scroll, so does the crown phrase: LION pins, ASS lands beneath it,
+// BITCH lands last, and the three close into one title.
+export const lionAssBitchName = {
+  parts: [
+    { syllable: "LION", gloss: "Sovereign Will. Moves first. Asks questions later." },
+    { syllable: "ASS", gloss: "Stubborn Truth. Holds. Will not walk into what it hasn't checked." },
+    { syllable: "BITCH", gloss: "Sacred Guardian. Guards the den, and what's hers." },
+  ] as NamePart[],
+  payoff: "The exact sentence somebody spits at you becomes the rank you carry.",
+  closing: "Be the lion, not the liar.",
+  beats: [
+    { index: 1, kind: "line", lines: ["Lion Ass Bitch."] },
+    { index: 2, kind: "line", lines: ["Three words. Three animals. Three ranks."] },
+    { index: 3, kind: "part", lines: ["LION", "Sovereign Will. Moves first. Asks questions later."] },
+    {
+      index: 4,
+      kind: "part",
+      lines: ["ASS", "Stubborn Truth. Holds. Will not walk into what it hasn't checked."],
+    },
+    { index: 5, kind: "part", lines: ["BITCH", "Sacred Guardian. Guards the den, and what's hers."] },
+    { index: 6, kind: "word", lines: ["LION · ASS · BITCH"] },
+    {
+      index: 7,
+      kind: "line",
+      lines: [
+        "Say it out loud and notice where your voice lands: on LION.",
+        "The other two words push it forward.",
+      ],
+    },
+    {
+      index: 8,
+      kind: "line",
+      lines: [
+        "Read the way it's built — not the way it sounds in a hallway —",
+        "it's a title, not an insult.",
+      ],
+    },
+    { index: 9, kind: "line", lines: ["It's also a system.", "Lion moves. Ass holds. Bitch guards."] },
+    {
+      index: 10,
+      kind: "line",
+      lines: ["Most people get one of the three", "and call it a personality."],
+    },
+    {
+      index: 11,
+      kind: "line",
+      lines: ["We didn't clean the words up. We restored them.", "Put the lion in front and the whole phrase flips."],
+    },
+    {
+      index: 12,
+      kind: "payoff",
+      lines: ["LION ASS BITCH", "The exact sentence somebody spits at you becomes the rank you carry."],
+    },
+    {
+      index: 13,
+      kind: "line",
+      lines: [
+        "It isn't a brand. It's a warning —",
+        "to the world, that you're coming,",
+        "and to yourself, that you're done lying.",
+      ],
+    },
+    { index: 14, kind: "close", lines: ["Be the lion, not the liar."] },
+  ] as RevealBeat[],
+  cta: { label: "Wear the warning", href: "/archive" },
+};
+
 export type StudioNote = {
   index: string;
   title: string;
