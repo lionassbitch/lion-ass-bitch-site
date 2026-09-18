@@ -755,3 +755,243 @@
     scroll-behavior: auto !important;
   }
 }
+
+/* THE NAME — brand nomenclature on /mythos ---------------------------------- */
+.theName__title {
+  font-size: clamp(3.2rem, 9vw, 8rem);
+  margin-bottom: 26px;
+}
+.theName__intro {
+  margin-bottom: clamp(2.5rem, 5vw, 4.5rem);
+}
+.nameGrid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 18px;
+  margin-bottom: clamp(3rem, 6vw, 5.5rem);
+}
+.nameCard {
+  display: flex;
+  flex-direction: column;
+  padding: 28px 26px 26px;
+  border: 1px solid var(--line);
+  background: var(--paper-2);
+}
+.nameCard__index {
+  color: var(--gold);
+  font-family: var(--font-display), Impact, sans-serif;
+  font-size: 1.4rem;
+  line-height: 1;
+}
+.nameCard__word {
+  margin: 14px 0 4px;
+  font-family: var(--font-display), Impact, sans-serif;
+  font-size: clamp(3.4rem, 6vw, 5.6rem);
+  line-height: 0.88;
+  letter-spacing: -0.03em;
+  text-transform: uppercase;
+}
+.nameCard__domain {
+  margin: 0 0 18px;
+  color: var(--signal);
+  font-size: 10px;
+  font-weight: 900;
+  letter-spacing: 0.22em;
+  text-transform: uppercase;
+}
+.nameCard__body {
+  color: #d8cfd6;
+  line-height: 1.75;
+}
+.nameCard__body p {
+  margin: 0 0 1em;
+}
+.nameCard__archetype {
+  margin-top: auto;
+  padding-top: 18px;
+  color: var(--muted);
+  font-size: 10px;
+  font-weight: 900;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+}
+.nameCard__archetype b {
+  color: var(--ink);
+}
+.nameCard__archetype span {
+  color: var(--signal);
+  margin-left: 6px;
+}
+.nameCard__archetype:hover b {
+  color: var(--signal);
+}
+.nameColumns {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: clamp(28px, 6vw, 80px);
+  padding-top: clamp(2rem, 4vw, 3.5rem);
+  border-top: 1px solid var(--line);
+}
+.nameColumns__head {
+  margin: 0 0 18px;
+  font-family: var(--font-display), Impact, sans-serif;
+  font-size: clamp(2rem, 4vw, 3.2rem);
+  line-height: 0.9;
+  letter-spacing: -0.02em;
+  text-transform: uppercase;
+}
+.nameQuote {
+  max-width: 34ch;
+  margin: clamp(3rem, 6vw, 5.5rem) 0 0;
+  padding-left: clamp(18px, 3vw, 34px);
+  border-left: 1px solid var(--gold);
+}
+.nameQuote p {
+  margin: 0 0 14px;
+  font-family: var(--font-display), Impact, sans-serif;
+  font-size: clamp(1.8rem, 3.6vw, 3rem);
+  line-height: 1.02;
+  text-transform: uppercase;
+  letter-spacing: -0.01em;
+}
+.nameQuote footer {
+  color: var(--muted);
+  font-size: 10px;
+  font-weight: 900;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+}
+.nameSignOff {
+  margin: clamp(2rem, 4vw, 3rem) 0 0;
+  color: var(--gold);
+  font-size: 11px;
+  font-weight: 900;
+  letter-spacing: 0.28em;
+  text-transform: uppercase;
+}
+@media (max-width: 900px) {
+  .nameGrid,
+  .nameColumns {
+    grid-template-columns: 1fr;
+  }
+}
+
+/* EXSUVERA — scroll reveal on /exsuvera ------------------------------------ */
+/* Native scrolling with fade-on-entry only. Copy is in the HTML at load; it is
+   hidden only once JavaScript has mounted (data-js) and can reveal it again. */
+.exsuveraReveal__section {
+  position: relative;
+  border-bottom: 1px solid var(--line);
+  background: linear-gradient(180deg, var(--paper) 0%, var(--paper-3) 50%, var(--paper) 100%);
+}
+.exsuveraBeat {
+  position: relative;
+  display: grid;
+  place-items: center;
+  min-height: 100svh;
+  padding: 0 var(--pad);
+  text-align: center;
+}
+.exsuveraBeat__copy {
+  max-width: 34ch;
+}
+.exsuveraBeat__line {
+  margin: 0;
+  color: #d8cfd6;
+  font-size: clamp(1.25rem, 2.6vw, 2rem);
+  line-height: 1.45;
+}
+.exsuveraReveal__section > .exsuveraBeat:first-of-type .exsuveraBeat__line {
+  font-family: var(--font-display), Impact, sans-serif;
+  font-size: clamp(2.2rem, 5vw, 4.2rem);
+  line-height: 1;
+  text-transform: uppercase;
+  letter-spacing: -0.02em;
+}
+.exsuveraBeat__word {
+  margin: 0;
+  font-family: var(--font-display), Impact, sans-serif;
+  font-size: clamp(4.5rem, 14vw, 12rem);
+  line-height: 0.86;
+  letter-spacing: -0.03em;
+  text-transform: uppercase;
+}
+.exsuveraBeat__gloss {
+  margin: 16px 0 0;
+  color: var(--muted);
+  font-size: clamp(1rem, 1.6vw, 1.25rem);
+  letter-spacing: 0.02em;
+}
+.exsuveraBeat--word .exsuveraBeat__word,
+.exsuveraBeat--payoff .exsuveraBeat__word {
+  color: var(--gold);
+}
+.exsuveraBeat--payoff .exsuveraBeat__gloss {
+  margin-top: 26px;
+  color: var(--ink);
+  font-family: var(--font-display), Impact, sans-serif;
+  font-size: clamp(1.8rem, 4vw, 3.4rem);
+  line-height: 1;
+  text-transform: uppercase;
+  letter-spacing: -0.01em;
+}
+.exsuveraBeat__cta {
+  margin-top: 40px;
+}
+
+/* Beats 3–5: sticky syllables. The wrappers collapse (display: contents) so
+   all three copies share the stack as their sticky containing block: EX pins
+   at 22svh and holds when SU arrives one viewport later; SU pins beneath it;
+   VERA lands last. The stack then scrolls out as one and beat 6 closes them up. */
+.exsuveraReveal__stack {
+  position: relative;
+  padding: 22svh var(--pad) 40svh;
+  text-align: center;
+}
+.exsuveraReveal__stack .exsuveraBeat {
+  display: contents;
+}
+.exsuveraReveal__stack .exsuveraBeat__copy {
+  position: sticky;
+  top: calc(22svh + var(--stack, 0) * clamp(5.4rem, 15vw, 13rem));
+  margin: 0 auto;
+  padding-bottom: 8px;
+}
+.exsuveraReveal__stack .exsuveraBeat:not(:first-child) .exsuveraBeat__copy {
+  margin-top: 100svh;
+}
+.exsuveraReveal__stack .exsuveraBeat__gloss {
+  margin-top: 6px;
+}
+
+/* Sticky ENTER, corner of the viewport from beat 2 onward. Zero height so it
+   never shifts layout; it releases when the reveal section scrolls out. */
+.exsuveraReveal__stickyCta {
+  position: sticky;
+  top: calc(100svh - 92px);
+  z-index: 5;
+  height: 0;
+  display: flex;
+  justify-content: flex-end;
+  padding-right: var(--pad);
+}
+.exsuveraReveal__stickyCta .btn {
+  background: color-mix(in srgb, var(--paper) 80%, transparent);
+  backdrop-filter: blur(10px);
+}
+
+/* Fade-on-entry, only once JS is present to reveal. */
+[data-js] [data-reveal] {
+  opacity: 0;
+  transform: translateY(18px);
+  transition: opacity 0.8s ease, transform 0.8s cubic-bezier(0.2, 0.8, 0.2, 1);
+}
+[data-js] [data-reveal].is-visible {
+  opacity: 1;
+  transform: none;
+}
+@media (prefers-reduced-motion: reduce) {
+  [data-js] [data-reveal] {
+    transform: none;
+  }
+}

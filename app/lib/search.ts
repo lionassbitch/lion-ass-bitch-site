@@ -1,7 +1,7 @@
 // A lightweight, content-derived search index over the institution's canon
 // pages (relics are searched separately from the live catalog).
 import { dossiers } from "../content/characters";
-import { creed, mythos, exsuvera } from "../content/canon";
+import { creed, mythos, exsuvera, theName, exsuveraName } from "../content/canon";
 import { transmissions } from "../content/frequency";
 
 export type PageRecord = {
@@ -134,6 +134,26 @@ export function buildPageIndex(): PageRecord[] {
       keywords: `mythos chapter ${chapter.body.join(" ")}`,
     });
   }
+
+  for (const word of theName.words) {
+    records.push({
+      href: "/mythos#the-name",
+      title: `${word.word} — ${word.domain}`,
+      summary: word.body[0] ?? "",
+      kind: "Nomenclature",
+      keywords: `nomenclature name naming meaning rank ${word.word} ${word.verb} ${word.archetype.name} ${word.body.join(" ")}`,
+    });
+  }
+
+  records.push({
+    href: "/exsuvera#the-word",
+    title: "Exsuvera — the coined word",
+    summary: exsuveraName.payoff,
+    kind: "Nomenclature",
+    keywords: `exsuvera coined word etymology exuviae molt ${exsuveraName.parts
+      .map((part) => `${part.syllable} ${part.gloss}`)
+      .join(" ")} ${exsuveraName.closing}`,
+  });
 
   return records;
 }
