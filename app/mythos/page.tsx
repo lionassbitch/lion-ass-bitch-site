@@ -1,7 +1,7 @@
 import type { Metadata } from "next";
 import Link from "next/link";
-import { mythos, theName, lionAssBitchName } from "../content/canon";
-import WordReveal from "../components/WordReveal";
+import { mythos } from "../content/canon";
+import TheName from "../components/TheName";
 import { dossiers } from "../content/characters";
 
 export const metadata: Metadata = {
@@ -44,69 +44,7 @@ export default function MythosPage() {
         </div>
       </section>
 
-      <WordReveal
-        id="the-name-reveal"
-        title="Lion Ass Bitch — the name, assembled"
-        beats={lionAssBitchName.beats}
-        cta={lionAssBitchName.cta}
-        enterLabel="Archive"
-      />
-
-      <section className="section section--edge wrap theName" id="the-name" aria-labelledby="the-name-title">
-        <p className="eyebrow">The Name / {theName.kicker}</p>
-        <h2 id="the-name-title" className="sectionTitle theName__title">
-          Lion Ass Bitch.
-        </h2>
-        <div className="prose theName__intro">
-          {theName.whatItIs.slice(1).map((paragraph, index) => (
-            <p key={index}>{paragraph}</p>
-          ))}
-        </div>
-
-        <div className="nameGrid" role="list">
-          {theName.words.map((word) => (
-            <article className="nameCard" key={word.word} role="listitem">
-              <span className="nameCard__index">{word.index}</span>
-              <h3 className="nameCard__word">{word.word}</h3>
-              <p className="nameCard__domain">{word.domain}</p>
-              <div className="nameCard__body">
-                {word.body.map((paragraph, index) => (
-                  <p key={index}>{paragraph}</p>
-                ))}
-              </div>
-              <Link className="nameCard__archetype" href={`/dossiers/${word.archetype.slug}`}>
-                In our world, that&apos;s <b>{word.archetype.name}</b>{" "}
-                <span aria-hidden="true">→</span>
-              </Link>
-            </article>
-          ))}
-        </div>
-
-        <div className="nameColumns">
-          <div>
-            <h3 className="nameColumns__head">Why it is</h3>
-            <div className="prose">
-              {theName.whyItIs.map((paragraph, index) => (
-                <p key={index}>{paragraph}</p>
-              ))}
-            </div>
-          </div>
-          <div>
-            <h3 className="nameColumns__head">How it arose</h3>
-            <div className="prose">
-              {theName.howItArose.map((paragraph, index) => (
-                <p key={index}>{paragraph}</p>
-              ))}
-            </div>
-          </div>
-        </div>
-
-        <blockquote className="nameQuote">
-          <p>&ldquo;{theName.quote.text}&rdquo;</p>
-          <footer>— {theName.quote.attribution}</footer>
-        </blockquote>
-        <p className="nameSignOff">{theName.signOff}</p>
-      </section>
+      <TheName />
 
       <section className="section section--edge wrap" aria-labelledby="bloodline-title">
         <p className="eyebrow">The three forces</p>

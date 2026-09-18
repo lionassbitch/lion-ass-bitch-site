@@ -23,6 +23,9 @@ const { dossiers, getDossier } = await import(appUrl("content/characters.ts"));
 const { transmissions, getTransmission } = await import(appUrl("content/frequency.ts"));
 const { buildPageIndex } = await import(appUrl("lib/search.ts"));
 const { primaryNav, siteIndex, site } = await import(appUrl("lib/site.ts"));
+const { LAB_ORIGIN, isExsuveraGateHost, isLabRedirectHost, normalizeHost } = await import(
+  appUrl("lib/hosts.ts")
+);
 const catalogSnapshot = (await import(appUrl("catalog-snapshot.ts"))).default;
 
 const SHOP_DOMAIN = site.shop.domain;
@@ -108,6 +111,21 @@ test("the nomenclature carries three ranks and the coined word assembles", () =>
     "both reveals share one beat structure",
   );
   assert.ok(lionAssBitchName.cta.href.startsWith("/"));
+});
+
+test("the domain family routes to the gate or the flagship", () => {
+  assert.equal(LAB_ORIGIN, "https://lionassbitch.com");
+  for (const host of ["exsuvera.com", "www.exsuvera.com", "exsuvera.lionassbitch.com"]) {
+    assert.ok(isExsuveraGateHost(host), `${host} should serve the gate`);
+    assert.ok(!isLabRedirectHost(host));
+  }
+  assert.ok(isExsuveraGateHost("EXSUVERA.COM:443"), "host matching ignores case and port");
+  assert.ok(isLabRedirectHost("lab.exsuvera.com"));
+  for (const host of ["lionassbitch.com", "www.lionassbitch.com", "localhost:3000", null]) {
+    assert.ok(!isExsuveraGateHost(host), `${host} must render the LAB home`);
+    assert.ok(!isLabRedirectHost(host));
+  }
+  assert.equal(normalizeHost(" Www.Exsuvera.com:8080 "), "www.exsuvera.com");
 });
 
 test("the bloodline has three unique dossiers with full records", () => {

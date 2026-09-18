@@ -1,4 +1,8 @@
 import Link from "next/link";
+import { headers } from "next/headers";
+import { permanentRedirect } from "next/navigation";
+import ExsuveraGate from "./components/ExsuveraGate";
+import { LAB_ORIGIN, isExsuveraGateHost, isLabRedirectHost } from "./lib/hosts";
 import { getRelics } from "./lib/catalog";
 import { dossiers } from "./content/characters";
 import { site } from "./lib/site";
@@ -7,6 +11,13 @@ import RelicCard from "./components/RelicCard";
 export const dynamic = "force-dynamic";
 
 export default async function Home() {
+  // The same deployment answers on the whole domain family. Exsuvera hosts
+  // get the gate at "/"; lab.exsuvera.com goes straight to the flagship.
+  const requestHeaders = await headers();
+  const host = requestHeaders.get("x-forwarded-host") ?? requestHeaders.get("host");
+  if (isLabRedirectHost(host)) permanentRedirect(LAB_ORIGIN);
+  if (isExsuveraGateHost(host)) return <ExsuveraGate />;
+
   const relics = await getRelics();
   const featured = relics.slice(0, 6);
 

@@ -995,3 +995,17 @@
     transform: none;
   }
 }
+
+/* EXSUVERA PRESENTS gate (exsuvera.com, exsuvera.lionassbitch.com) ---------- */
+.gate__hero .heroCopy {
+  max-width: 900px;
+}
+.gate__hero .sideNote {
+  color: var(--gold);
+}
+.gate__trinity {
+  border-top: 1px solid var(--line);
+}
+.gate__final h2 {
+  font-size: clamp(6rem, 18vw, 16rem);
+}
