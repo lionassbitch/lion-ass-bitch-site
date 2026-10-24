@@ -6,8 +6,7 @@ import "./product-flip.css";
 import "./brand-refresh.css";
 import "./system.css";
 import "./commerce.css";
-import SiteHeader from "./components/SiteHeader";
-import SiteFooter from "./components/SiteFooter";
+import SiteChrome from "./components/SiteChrome";
 import Analytics from "./components/Analytics";
 import { site } from "./lib/site";
 
@@ -65,13 +64,16 @@ export default function RootLayout({
 }: Readonly<{ children: React.ReactNode }>) {
   return (
     <html lang="en">
+      <head>
+        <link rel="preconnect" href="https://fonts.googleapis.com" />
+        <link rel="preconnect" href="https://fonts.gstatic.com" crossOrigin="" />
+        <link
+          href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;700&family=Cinzel+Decorative:wght@700&family=Cormorant+Garamond:ital,wght@0,400;0,500;1,400;1,500&family=DM+Sans:wght@300;400;500&display=swap"
+          rel="stylesheet"
+        />
+      </head>
       <body className={`${anton.variable} ${inter.variable}`}>
-        <a className="skip-link" href="#main">
-          Skip to content
-        </a>
-        <SiteHeader />
-        <main id="main">{children}</main>
-        <SiteFooter />
+        <SiteChrome>{children}</SiteChrome>
         <Analytics />
       </body>
     </html>
