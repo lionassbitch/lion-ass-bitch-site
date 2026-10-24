@@ -47,6 +47,8 @@ export const labContent = {
     links: [
       { label: "Manifesto", href: "#manifesto" },
       { label: "The Forces", href: "#pride" },
+      { label: "About", href: "#about" },
+      { label: "Founder", href: "#founder" },
       { label: "Shop", href: "#shop" },
       { label: "Contact", href: "#contact" },
     ],
@@ -283,6 +285,31 @@ export const labContent = {
       "I do not disappear to make others comfortable.",
       "I leave the floor more powerful than I entered it.",
     ],
+  },
+
+  about: {
+    label: "About",
+    heading: "An institution, not a costume.",
+    lede: "Lion Ass Bitch is a Bronx-born house. Clothes are not a costume. They are evidence.",
+    paragraphs: [
+      "Made to order. Shipped worldwide. Designed in the LAB. For the maximalist, the minimalist, the misfit, and the main character. No gatekeeping. No shrinking. No permission needed.",
+      "Three forces. One philosophy. Power without validation. The Lion is the Will. The Ass is the Work. The Bitch is the Wisdom. Together they are balance in motion.",
+      "Exsuvera is the studio. Lion Ass Bitch is the mark. Voguejitsu is the discipline. The diss became the dominion.",
+    ],
+  },
+
+  founder: {
+    label: "The Founder",
+    name: "Eddie Colón",
+    role: "Founder · First Witness",
+    location: "The Bronx, New York",
+    heading: "A name they meant as a warning.",
+    message: [
+      "They handed me a name that was supposed to shrink me. I was born in the Bronx, where the city names you before you get a vote. The only freedom I trusted was deciding what that name would mean.",
+      "So I built the insult into an institution. Not a slogan on a shirt. A mythology. A gate. A studio called Exsuvera, made to keep building worlds instead of chasing a season.",
+      "The mission is not soft. Make evidence. Give the maximalist, the minimalist, the misfit, and the main character something to wear on the day they refuse to shrink. Turn the diss into dominion. Leave the floor more powerful than you entered it.",
+    ],
+    signature: "Eddie Colón",
   },
 
   cta: {

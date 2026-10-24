@@ -3,6 +3,7 @@
 import { useEffect } from "react";
 import "./lab.css";
 import { labContent } from "./content";
+import { About } from "./components/About";
 import { Archetypes } from "./components/Archetypes";
 import { Blueprint } from "./components/Blueprint";
 import { Cta, Footer, Marquee } from "./components/Closing";
@@ -45,6 +46,7 @@ export default function LabSite() {
         <Manifesto />
         <Archetypes />
         <FieldNotes />
+        <About />
         <Marquee />
         <Pillars />
         <Voguejitsu />
