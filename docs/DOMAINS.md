@@ -21,7 +21,7 @@ Host matching lives in `app/lib/hosts.ts`. Add a host there and it starts
 serving the gate or redirecting on the next deploy; DNS is the only per-domain
 step.
 
-## 1. Buy `exsuvera.com` at Porkbun
+## 1. Buy `exsuvera.com` at Porkbun — DONE
 
 1. Porkbun → search `exsuvera.com` → add to cart → check out.
 2. Leave WHOIS privacy on (free at Porkbun).
@@ -30,39 +30,47 @@ step.
    that is the plan), not a personal name, so the WHOIS creation date and the
    mark's owner line up for first-use evidence.
 
-## 2. Attach the hosts in Vercel
+## 2. Hosts attached in Vercel — DONE (2026-10-29)
 
-Vercel → team `edwin-colonjs-projects` → project `lion-ass-bitch-site` →
-Settings → Domains → add each of:
+All four hosts are attached to project `lion-ass-bitch-site` and verified (no
+TXT challenge was required):
 
 - `exsuvera.com`
-- `www.exsuvera.com` (set to redirect to `exsuvera.com`, or leave as-is; both serve the gate)
-- `lab.exsuvera.com`
+- `www.exsuvera.com`
+- `lab.exsuvera.com` — Vercel-level 308 redirect to `lionassbitch.com`
+  (belt and braces: `app/lib/hosts.ts` also redirects it in the app)
 - `exsuvera.lionassbitch.com`
 
-Vercel will show the exact records it expects for each. They match the table
-below; if Vercel shows a different target, use Vercel's.
+## 3. DNS records at Porkbun — the only step left
 
-## 3. DNS records at Porkbun
+These are the values Vercel reports for this project (its rank-1
+recommendations). `cname.vercel-dns.com` and `76.76.21.21` also work, but the
+project-specific ones below are what Vercel prefers.
 
 ### `exsuvera.com` zone
 
-| Type | Host | Answer | TTL |
-|---|---|---|---|
-| A | `exsuvera.com` (apex, leave host blank) | `76.76.21.21` | 600 |
-| CNAME | `www` | `cname.vercel-dns.com` | 600 |
-| CNAME | `lab` | `cname.vercel-dns.com` | 600 |
-
-Delete Porkbun's default parking / ALIAS records on the apex first, or the A
-record will conflict.
-
-### `lionassbitch.com` zone (already at Porkbun)
+First delete every default Porkbun record on the apex, `*`, and `www`
+(the parking A records `207.207.210.x` and the `uixie.porkbun.com` CNAME).
+The wildcard must go or it shadows `lab`.
 
 | Type | Host | Answer | TTL |
 |---|---|---|---|
-| CNAME | `exsuvera` | `cname.vercel-dns.com` | 600 |
+| A | leave blank (apex) | `216.198.79.1` | 600 |
+| A | leave blank (apex) | `64.29.17.1` | 600 |
+| CNAME | `www` | `776d5f2d1c6e27a4.vercel-dns-017.com` | 600 |
+| CNAME | `lab` | `776d5f2d1c6e27a4.vercel-dns-017.com` | 600 |
 
-Do not touch the existing apex or `www` records.
+### `lionassbitch.com` zone
+
+| Type | Host | Answer | TTL |
+|---|---|---|---|
+| CNAME | `exsuvera` | `776d5f2d1c6e27a4.vercel-dns-017.com` | 600 |
+
+Do not touch the existing apex records. Note: the apex currently resolves to
+Cloudflare addresses (`162.159.143.30`, `172.66.3.26`), not Vercel, and
+`www.lionassbitch.com` has no record at all. Vercel reports the apex as
+misconfigured for its purposes. Decide whether the flagship is meant to be
+served by Cloudflare (in front of or instead of Vercel) before changing it.
 
 ## 4. Verify
 
