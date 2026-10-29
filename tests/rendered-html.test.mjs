@@ -16,12 +16,16 @@ const appUrl = (p) => new URL(`../app/${p}`, import.meta.url).href;
 
 const { toRelic, relicCategory, fallbackRelics, RELIC_CATEGORIES, money } =
   await import(appUrl("lib/catalog.ts"));
-const { creed, mythos, exsuvera, founder } = await import(appUrl("content/canon.ts"));
+const { creed, mythos, exsuvera, founder, theName, exsuveraName, lionAssBitchName } =
+  await import(appUrl("content/canon.ts"));
 const { voidChapters, getChapterAt, voidSideBeats } = await import(appUrl("content/void.ts"));
 const { dossiers, getDossier } = await import(appUrl("content/characters.ts"));
 const { transmissions, getTransmission } = await import(appUrl("content/frequency.ts"));
 const { buildPageIndex } = await import(appUrl("lib/search.ts"));
 const { primaryNav, siteIndex, site } = await import(appUrl("lib/site.ts"));
+const { LAB_ORIGIN, isExsuveraGateHost, isLabRedirectHost, normalizeHost } = await import(
+  appUrl("lib/hosts.ts")
+);
 const catalogSnapshot = (await import(appUrl("catalog-snapshot.ts"))).default;
 
 const SHOP_DOMAIN = site.shop.domain;
@@ -70,6 +74,58 @@ test("the written canon is complete and well-formed", () => {
 
   assert.ok(exsuvera.pillars.length >= 3 && exsuvera.disciplines.length >= 1);
   assert.ok(founder.name && founder.story.length >= 2);
+});
+
+test("the nomenclature carries three ranks and the coined word assembles", () => {
+  assert.equal(theName.words.length, 3, "three words, three animals, three ranks");
+  assert.deepEqual(
+    theName.words.map((word) => word.word),
+    ["Lion", "Ass", "Bitch"],
+  );
+  for (const word of theName.words) {
+    assert.ok(word.domain && word.verb && word.body.length > 0);
+    assert.ok(getDossier(word.archetype.slug), `${word.word} must map to a dossier`);
+  }
+  assert.ok(theName.whatItIs.length > 0 && theName.whyItIs.length > 0);
+  assert.ok(theName.howItArose.length > 0 && theName.quote.text && theName.signOff);
+
+  assert.equal(exsuveraName.beats.length, 14, "fourteen beats, one per viewport");
+  assert.deepEqual(
+    exsuveraName.beats.filter((beat) => beat.kind === "part").map((beat) => beat.lines[0]),
+    exsuveraName.parts.map((part) => part.syllable),
+    "the sticky beats spell the coined word in order",
+  );
+  assert.equal(exsuveraName.beats.at(-1).kind, "close");
+  assert.ok(exsuveraName.beats.some((beat) => beat.lines.includes(exsuveraName.payoff)));
+  assert.ok(exsuveraName.cta.href.startsWith("/"));
+
+  // If Exsuvera assembles on scroll, so does the crown phrase — same mechanics.
+  assert.equal(lionAssBitchName.beats.length, exsuveraName.beats.length);
+  assert.deepEqual(
+    lionAssBitchName.beats.filter((beat) => beat.kind === "part").map((beat) => beat.lines[0]),
+    ["LION", "ASS", "BITCH"],
+  );
+  assert.deepEqual(
+    lionAssBitchName.beats.map((beat) => beat.kind),
+    exsuveraName.beats.map((beat) => beat.kind),
+    "both reveals share one beat structure",
+  );
+  assert.ok(lionAssBitchName.cta.href.startsWith("/"));
+});
+
+test("the domain family routes to the gate or the flagship", () => {
+  assert.equal(LAB_ORIGIN, "https://lionassbitch.com");
+  for (const host of ["exsuvera.com", "www.exsuvera.com", "exsuvera.lionassbitch.com"]) {
+    assert.ok(isExsuveraGateHost(host), `${host} should serve the gate`);
+    assert.ok(!isLabRedirectHost(host));
+  }
+  assert.ok(isExsuveraGateHost("EXSUVERA.COM:443"), "host matching ignores case and port");
+  assert.ok(isLabRedirectHost("lab.exsuvera.com"));
+  for (const host of ["lionassbitch.com", "www.lionassbitch.com", "localhost:3000", null]) {
+    assert.ok(!isExsuveraGateHost(host), `${host} must render the LAB home`);
+    assert.ok(!isLabRedirectHost(host));
+  }
+  assert.equal(normalizeHost(" Www.Exsuvera.com:8080 "), "www.exsuvera.com");
 });
 
 test("the bloodline has three unique dossiers with full records", () => {

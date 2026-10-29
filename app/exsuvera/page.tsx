@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import Link from "next/link";
-import { exsuvera } from "../content/canon";
+import { exsuvera, exsuveraName } from "../content/canon";
+import WordReveal from "../components/WordReveal";
 
 export const metadata: Metadata = {
   title: "Exsuvera Studios",
@@ -23,6 +24,13 @@ export default function ExsuveraPage() {
           <span>{exsuvera.latin}</span>
         </div>
       </header>
+
+      <WordReveal
+        id="the-word"
+        title="Exsuvera — the coined word, taken apart"
+        beats={exsuveraName.beats}
+        cta={exsuveraName.cta}
+      />
 
       <section className="section wrap">
         <p className="eyebrow">The method</p>

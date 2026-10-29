@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import Link from "next/link";
 import { mythos } from "../content/canon";
+import TheName from "../components/TheName";
 import { dossiers } from "../content/characters";
 
 export const metadata: Metadata = {
@@ -42,6 +43,8 @@ export default function MythosPage() {
           ))}
         </div>
       </section>
+
+      <TheName />
 
       <section className="section section--edge wrap" aria-labelledby="bloodline-title">
         <p className="eyebrow">The three forces</p>
