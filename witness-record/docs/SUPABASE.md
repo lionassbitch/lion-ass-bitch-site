@@ -13,7 +13,7 @@ database and the private bucket; the Node server itself still needs a host
 | Direct DB host | `db.smdexcrjhjgqruqwwyjs.supabase.co:5432` (IPv6 on the free plan; most hosts need the pooler below) |
 | Session pooler | `aws-0-us-east-1.pooler.supabase.com:5432`, user `postgres.smdexcrjhjgqruqwwyjs` (confirm under **Connect** in the dashboard) |
 | Bucket | `witness-record`, private, 1 GiB per-object limit |
-| Migrations applied | `0001_initial.sql`, `0002_lock_down_api_roles.sql` (recorded in `schema_migrations`, so the server's own runner will not re-apply them) |
+| Migrations applied | `0001_initial.sql`, `0002_lock_down_api_roles.sql`, `0003_upload_mode.sql` (recorded in `schema_migrations`, so the server's own runner will not re-apply them) |
 
 ## What the lock-down migration did
 
@@ -52,14 +52,16 @@ S3_SSE=
 S3_ACCESS_KEY_ID=<from dashboard>
 S3_SECRET_ACCESS_KEY=<from dashboard>
 UPLOAD_CHUNK_BYTES=5242880
+UPLOAD_MODE=direct
 ```
 
 Notes:
 - `S3_SSE` is empty because Supabase Storage encrypts at rest itself and does
   not accept the AWS SSE header. The readiness page will report "No SSE header
   sent; rely on bucket default encryption", which is accurate.
-- Supabase Storage supports S3 multipart uploads, which the resumable upload
-  path uses; keep the chunk size at 5 MiB or more.
+- Supabase Storage supports S3 multipart uploads and presigned part URLs, and
+  its S3 endpoint answers CORS preflights for any origin, which the direct
+  browser-to-bucket upload path relies on; keep the chunk size at 5 MiB or more.
 - Keep the bucket private. The app only ever issues presigned links that expire
   after `DOWNLOAD_LINK_TTL_SECONDS`.
 - Add the Node host's public origin as `BASE_URL`, then register

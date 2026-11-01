@@ -103,38 +103,53 @@ describe("witness submission workflow", () => {
     expect(answers.json.statement.answers.q6_circumstances).toBe(sampleAnswers.q6_circumstances);
   });
 
-  it("uploads an original video in resumable chunks, preserving bytes and SHA-256", async () => {
+  it("uploads an original video in resumable parts straight to storage, preserving bytes and SHA-256", async () => {
     const begin = await t.api(witnessCookie, "POST", `/api/statements/${statementId}/uploads`, { kind: "video", sourceType: "live_capture", filename: "recording.webm", declaredMime: "video/webm", declaredBytes: webm.length, recordingConsent: true });
     expect(begin.status).toBe(201);
-    const { uploadId, chunkBytes } = begin.json;
+    const { uploadId, chunkBytes, mode } = begin.json;
+    expect(mode).toBe("direct");
     expect(chunkBytes).toBe(16 * 1024);
+    const putPart = async (n: number, bytes: Buffer) => {
+      const grant = await t.api(witnessCookie, "POST", `/api/uploads/${uploadId}/parts`, { partNumber: n });
+      if (grant.status !== 200) return grant;
+      const u = new URL(grant.json.url);
+      // The bytes never pass through an authenticated API route: the presigned URL is the only credential.
+      const put = await t.app.inject({ method: "PUT", url: u.pathname + u.search, payload: bytes, headers: { "content-type": "application/octet-stream" } });
+      return { status: put.statusCode, json: put.json() };
+    };
     const first = webm.subarray(0, chunkBytes);
-    const r1 = await t.api(witnessCookie, "PUT", `/api/uploads/${uploadId}/chunk?offset=0`, first);
-    expect(r1.status).toBe(200);
-    expect(r1.json.bytesReceived).toBe(first.length);
-    // Simulated interruption: a stale retry with the wrong offset is refused and reports where to resume.
-    const dup = await t.api(witnessCookie, "PUT", `/api/uploads/${uploadId}/chunk?offset=0`, first);
+    expect((await putPart(1, first)).status).toBe(200);
+    // Simulated interruption: asking for part 1 again is refused and the server says where to resume (from storage, not from memory).
+    const dup = await t.api(witnessCookie, "POST", `/api/uploads/${uploadId}/parts`, { partNumber: 1 });
     expect(dup.status).toBe(409);
     expect(dup.json.details.bytesReceived).toBe(first.length);
     const status = await t.api(witnessCookie, "GET", `/api/uploads/${uploadId}`);
     expect(status.json.bytesReceived).toBe(first.length);
+    expect(status.json.partsReceived).toBe(1);
+    // Completing early is refused.
+    const early = await t.api(witnessCookie, "POST", `/api/uploads/${uploadId}/complete`);
+    expect(early.status).toBe(409);
+    // An expired or forged part link is refused.
+    const forged = await t.app.inject({ method: "PUT", url: "/api/files/part/not-a-token", payload: first, headers: { "content-type": "application/octet-stream" } });
+    expect(forged.statusCode).toBe(403);
     let offset = first.length;
+    let n = 2;
     while (offset < webm.length) {
       const chunk = webm.subarray(offset, Math.min(offset + chunkBytes, webm.length));
-      const r = await t.api(witnessCookie, "PUT", `/api/uploads/${uploadId}/chunk?offset=${offset}`, chunk);
-      expect(r.status).toBe(200);
+      expect((await putPart(n, chunk)).status).toBe(200);
       offset += chunk.length;
+      n += 1;
     }
-    const early = await t.api(witnessCookie, "POST", `/api/uploads/${uploadId}/complete`);
-    expect(early.status).toBe(200);
-    expect(early.json.status).toBe("complete");
-    expect(early.json.sha256).toBe(sha256(webm));
-    expect(early.json.sizeBytes).toBe(webm.length);
-    expect(early.json.detectedMime).toBe("video/webm");
-    expect(early.json.receivedAt).toMatch(/Z$/);
-    videoSha = early.json.sha256;
+    const done = await t.api(witnessCookie, "POST", `/api/uploads/${uploadId}/complete`);
+    expect(done.status).toBe(200);
+    expect(done.json.status).toBe("complete");
+    expect(done.json.sha256).toBe(sha256(webm));
+    expect(done.json.sizeBytes).toBe(webm.length);
+    expect(done.json.detectedMime).toBe("video/webm");
+    expect(done.json.receivedAt).toMatch(/Z$/);
+    videoSha = done.json.sha256;
     // Stored bytes are byte-identical to what was sent.
-    const stored = fs.readFileSync(path.join(t.storageDir, `statements/${statementId}/video/${early.json.mediaAssetId}`));
+    const stored = fs.readFileSync(path.join(t.storageDir, `statements/${statementId}/video/${done.json.mediaAssetId}`));
     expect(stored.equals(webm)).toBe(true);
     // Only one video at a time.
     const second = await t.api(witnessCookie, "POST", `/api/statements/${statementId}/uploads`, { kind: "video", sourceType: "uploaded_file", filename: "x.mp4", declaredMime: "video/mp4", declaredBytes: mp4.length, recordingConsent: true });
@@ -155,10 +170,10 @@ describe("witness submission workflow", () => {
 
   it("rejects files whose magic bytes do not match an accepted type", async () => {
     const fake = Buffer.concat([Buffer.from("MZ this is not a video"), Buffer.alloc(5000)]);
-    const begin = await t.api(witnessCookie, "POST", `/api/statements/${statementId}/uploads`, { kind: "document", sourceType: "uploaded_file", filename: "evil.exe", declaredMime: "application/pdf", declaredBytes: fake.length });
-    expect(begin.status).toBe(201);
-    const r = await t.api(witnessCookie, "PUT", `/api/uploads/${begin.json.uploadId}/chunk?offset=0`, fake.subarray(0, 16 * 1024));
-    expect(r.status).toBe(415);
+    await expect(uploadFile(t, witnessCookie, statementId, fake, { kind: "document", sourceType: "uploaded_file", filename: "evil.exe", mime: "application/pdf" })).rejects.toThrow(/415/);
+    const rejected = await t.ctx.dbHandle.exec("SELECT status, scan_detail FROM media_assets WHERE original_filename = 'evil.exe'");
+    expect(rejected.rows[0].status).toBe("rejected");
+    expect(fs.existsSync(path.join(t.storageDir, "statements", statementId, "document"))).toBe(fs.existsSync(path.join(t.storageDir, "statements", statementId, "document")));
     const oversized = await t.api(witnessCookie, "POST", `/api/statements/${statementId}/uploads`, { kind: "document", sourceType: "uploaded_file", filename: "big.pdf", declaredMime: "application/pdf", declaredBytes: 10 ** 9 });
     expect(oversized.status).toBe(413);
   });

@@ -286,13 +286,23 @@ export async function uploadFile(t: TestApp, cookie: string, statementId: string
     recordingConsent: meta.kind === "video" ? true : undefined,
   });
   if (begin.status !== 201) throw new Error(`begin failed ${begin.status} ${JSON.stringify(begin.json)}`);
-  const { uploadId, chunkBytes } = begin.json;
+  const { uploadId, chunkBytes, mode } = begin.json;
   let offset = 0;
+  let partNumber = 1;
   while (offset < file.length) {
     const chunk = file.subarray(offset, Math.min(offset + chunkBytes, file.length));
-    const r = await t.api(cookie, "PUT", `/api/uploads/${uploadId}/chunk?offset=${offset}`, chunk);
-    if (r.status !== 200) throw new Error(`chunk failed ${r.status} ${JSON.stringify(r.json)}`);
+    if (mode === "direct") {
+      const grant = await t.api(cookie, "POST", `/api/uploads/${uploadId}/parts`, { partNumber });
+      if (grant.status !== 200) throw new Error(`presign failed ${grant.status} ${JSON.stringify(grant.json)}`);
+      const url = new URL(grant.json.url);
+      const put = await t.app.inject({ method: "PUT", url: url.pathname + url.search, payload: chunk, headers: { "content-type": "application/octet-stream" } });
+      if (put.statusCode !== 200) throw new Error(`part put failed ${put.statusCode} ${put.body}`);
+    } else {
+      const r = await t.api(cookie, "PUT", `/api/uploads/${uploadId}/chunk?offset=${offset}`, chunk);
+      if (r.status !== 200) throw new Error(`chunk failed ${r.status} ${JSON.stringify(r.json)}`);
+    }
     offset += chunk.length;
+    partNumber += 1;
   }
   const done = await t.api(cookie, "POST", `/api/uploads/${uploadId}/complete`);
   if (done.status !== 200) throw new Error(`complete failed ${done.status} ${JSON.stringify(done.json)}`);

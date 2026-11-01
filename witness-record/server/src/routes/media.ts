@@ -33,6 +33,17 @@ export async function registerMediaRoutes(app: FastifyInstance, ctx: AppContext)
     },
   );
 
+  app.post<{ Params: { uploadId: string }; Body: { partNumber?: number } }>(
+    "/api/uploads/:uploadId/parts",
+    { config: { rateLimit: { max: 1200, timeWindow: "1 minute" } } },
+    async (req) => {
+      const { user } = requireAuth(req);
+      const partNumber = Number(req.body?.partNumber);
+      if (!Number.isInteger(partNumber) || partNumber < 1 || partNumber > 10000) throw new HttpError(400, "partNumber required.", "bad_part");
+      return media.presignPart(req.params.uploadId, user, partNumber);
+    },
+  );
+
   app.post<{ Params: { uploadId: string } }>("/api/uploads/:uploadId/complete", async (req) => {
     const { session, user } = requireAuth(req);
     return media.complete(req, req.params.uploadId, user, session);

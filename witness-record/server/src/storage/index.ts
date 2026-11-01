@@ -1,13 +1,15 @@
 import type { AppConfig } from "../config.js";
 import { LocalStorageDriver } from "./local.js";
 import { S3StorageDriver } from "./s3.js";
+import { UnconfiguredStorageDriver } from "./unconfigured.js";
 import type { StorageDriver } from "./types.js";
 
-export type { StorageDriver } from "./types.js";
+export type { StorageDriver, StoredPart } from "./types.js";
+export { LocalStorageDriver } from "./local.js";
 
 export function createStorage(cfg: AppConfig): StorageDriver {
   if (cfg.env.STORAGE_DRIVER === "s3") {
-    if (!cfg.storageConfigured) throw new Error("STORAGE_DRIVER=s3 requires S3_BUCKET, S3_ACCESS_KEY_ID and S3_SECRET_ACCESS_KEY.");
+    if (!cfg.storageConfigured) return new UnconfiguredStorageDriver();
     return new S3StorageDriver({
       bucket: cfg.env.S3_BUCKET,
       region: cfg.env.S3_REGION,

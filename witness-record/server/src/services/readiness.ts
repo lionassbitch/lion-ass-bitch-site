@@ -104,9 +104,26 @@ export async function readinessReport(ctx: AppContext): Promise<{ generatedAt: s
   items.push({
     key: "storage",
     label: "Private object storage",
-    status: !health.ok ? "FAILED" : ctx.storage.kind === "local" && ctx.cfg.isProd ? "WARNING" : "READY",
+    status: !ctx.storage.configured ? "NOT CONFIGURED" : !health.ok ? "FAILED" : ctx.storage.kind === "local" && ctx.cfg.isProd ? "WARNING" : "READY",
     detail: `${ctx.storage.description}; ${health.detail}; at rest: ${ctx.storage.encryptionAtRest}`,
     doc: "docs/SETUP.md#storage",
+  });
+  if (ctx.storage.kind === "s3") {
+    const completed = await scalar(ctx, sql`SELECT count(*) FROM media_assets WHERE status = 'complete' AND kind IN ('video','document')`);
+    items.push({
+      key: "uploads",
+      label: `Witness uploads to the bucket (${env.UPLOAD_MODE} mode)`,
+      status: completed > 0 ? "READY" : "NOT TESTED",
+      detail: completed > 0 ? `${completed} original file(s) stored and hashed` : "no upload has completed against this bucket yet — record a test statement",
+      doc: "docs/SETUP.md#storage",
+    });
+  }
+  items.push({
+    key: "retention_job",
+    label: "Scheduled draft purge",
+    status: env.RETENTION_JOB_ENABLED || env.CRON_SECRET ? "READY" : "NOT CONFIGURED",
+    detail: env.RETENTION_JOB_ENABLED ? "in-process daily timer (requires an always-on host)" : env.CRON_SECRET ? "external scheduler via GET /api/cron/retention with CRON_SECRET" : "RETENTION_JOB_ENABLED=false and no CRON_SECRET: drafts are never purged",
+    doc: "docs/RETENTION.md",
   });
 
   // Malware

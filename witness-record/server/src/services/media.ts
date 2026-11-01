@@ -21,12 +21,21 @@ export const beginUploadSchema = z.object({
 });
 
 export type UploadRow = typeof uploadSessions.$inferSelect;
+const PART_URL_TTL_SECONDS = 15 * 60;
 
 /**
- * Resumable, chunked uploads of original witness media. Bytes are appended in
- * order to a staging object; on completion the stored bytes are re-read to
- * compute the authoritative SHA-256 and size, which are then frozen with the
- * server receipt time. Nothing is transcoded, trimmed or otherwise modified.
+ * Resumable, chunked uploads of original witness media.
+ *
+ * Two transports, same guarantees:
+ *  - direct: the browser PUTs each part to a short-lived presigned URL on the
+ *    private bucket; the server never touches the bytes in flight.
+ *  - proxy:  parts are appended through this server.
+ *
+ * In both cases the storage service is the source of truth for which parts
+ * exist. On completion the stored object is re-read to compute the
+ * authoritative SHA-256 and size, its first bytes are sniffed for the real
+ * content type, and everything is frozen with the server receipt time.
+ * Nothing is transcoded, trimmed or otherwise modified.
  */
 export class MediaService {
   constructor(private readonly ctx: AppContext) {}
@@ -35,8 +44,13 @@ export class MediaService {
     return { ipAddress: clientIp(this.ctx, req), userAgent: clientUserAgent(this.ctx, req) };
   }
 
+  get mode(): "direct" | "proxy" {
+    return this.ctx.cfg.env.UPLOAD_MODE;
+  }
+
   async begin(req: FastifyRequest, st: StatementRow, user: CurrentUser, session: CurrentSession, rawInput: unknown) {
     if (st.status !== "draft") throw new HttpError(409, "This statement is finalized.", "finalized");
+    if (!this.ctx.storage.configured) throw new HttpError(503, "File storage is not configured yet.", "storage_unconfigured");
     const input = beginUploadSchema.parse(rawInput);
     const max = input.kind === "video" ? this.ctx.cfg.env.MAX_VIDEO_BYTES : this.ctx.cfg.env.MAX_DOCUMENT_BYTES;
     if (input.declaredBytes > max) throw new HttpError(413, `File exceeds the maximum size of ${max} bytes.`, "too_large", { max });
@@ -84,6 +98,7 @@ export class MediaService {
         storageUploadRef: ref,
         declaredBytes: input.declaredBytes,
         chunkBytes,
+        mode: this.mode,
         expiresAt: new Date(Date.now() + 24 * 3600 * 1000),
       })
       .returning();
@@ -94,10 +109,10 @@ export class MediaService {
       statementId: st.id,
       mediaAssetId: asset.id,
       action: "media.upload_started",
-      detail: { kind: input.kind, sourceType: input.sourceType, declaredBytes: input.declaredBytes, declaredMime: input.declaredMime, filename: input.filename },
+      detail: { kind: input.kind, sourceType: input.sourceType, declaredBytes: input.declaredBytes, declaredMime: input.declaredMime, filename: input.filename, mode: this.mode, storage: this.ctx.storage.kind },
       ...this.meta(req),
     });
-    return { uploadId: upload.id, mediaAssetId: asset.id, chunkBytes, bytesReceived: 0 };
+    return { uploadId: upload.id, mediaAssetId: asset.id, chunkBytes, bytesReceived: 0, mode: this.mode };
   }
 
   async getUpload(uploadId: string, userId: string): Promise<{ upload: UploadRow; asset: MediaRow }> {
@@ -107,13 +122,47 @@ export class MediaService {
     return { upload, asset };
   }
 
-  async status(uploadId: string, userId: string) {
-    const { upload, asset } = await this.getUpload(uploadId, userId);
-    return { uploadId: upload.id, mediaAssetId: asset.id, status: upload.status, bytesReceived: Number(upload.bytesReceived), declaredBytes: Number(upload.declaredBytes), chunkBytes: upload.chunkBytes };
+  /** Progress as the storage service sees it (direct mode) or as recorded by the server (proxy mode). */
+  private async received(upload: UploadRow): Promise<{ bytes: number; parts: number }> {
+    if (upload.mode === "direct" && upload.status === "open") {
+      const parts = await this.ctx.storage.listParts(upload.storageUploadRef!);
+      // Only count a contiguous prefix of parts; the client resumes from there.
+      let bytes = 0;
+      let n = 0;
+      for (const p of parts) {
+        if (p.partNumber !== n + 1) break;
+        bytes += p.size;
+        n += 1;
+      }
+      return { bytes, parts: n };
+    }
+    return { bytes: Number(upload.bytesReceived), parts: upload.partsReceived };
   }
 
+  async status(uploadId: string, userId: string) {
+    const { upload, asset } = await this.getUpload(uploadId, userId);
+    const r = await this.received(upload);
+    return { uploadId: upload.id, mediaAssetId: asset.id, status: upload.status, mode: upload.mode, bytesReceived: r.bytes, partsReceived: r.parts, declaredBytes: Number(upload.declaredBytes), chunkBytes: upload.chunkBytes };
+  }
+
+  /** Direct mode: a short-lived URL for exactly the next part. */
+  async presignPart(uploadId: string, user: CurrentUser, partNumber: number) {
+    const { upload } = await this.getUpload(uploadId, user.id);
+    if (upload.mode !== "direct") throw new HttpError(409, "This upload uses the server transport.", "wrong_mode");
+    if (upload.status !== "open") throw new HttpError(409, "Upload is not open.", "upload_closed");
+    if (upload.expiresAt.getTime() < Date.now()) throw new HttpError(410, "Upload expired.", "upload_expired");
+    const r = await this.received(upload);
+    if (partNumber !== r.parts + 1) throw new HttpError(409, `Next expected part is ${r.parts + 1}.`, "part_mismatch", { partsReceived: r.parts, bytesReceived: r.bytes });
+    const maxParts = Math.ceil(Number(upload.declaredBytes) / upload.chunkBytes);
+    if (partNumber > maxParts) throw new HttpError(413, "More parts than declared.", "size_exceeded");
+    const url = await this.ctx.storage.presignPartUrl(upload.storageUploadRef!, partNumber, PART_URL_TTL_SECONDS);
+    return { partNumber, url, expiresInSeconds: PART_URL_TTL_SECONDS, maxBytes: upload.chunkBytes };
+  }
+
+  /** Proxy mode: the server appends the next sequential chunk. */
   async appendChunk(req: FastifyRequest, uploadId: string, user: CurrentUser, offset: number, body: Buffer) {
     const { upload, asset } = await this.getUpload(uploadId, user.id);
+    if (upload.mode !== "proxy") throw new HttpError(409, "This upload uses direct-to-storage transport.", "wrong_mode");
     if (upload.status !== "open") throw new HttpError(409, "Upload is not open.", "upload_closed");
     if (upload.expiresAt.getTime() < Date.now()) throw new HttpError(410, "Upload expired.", "upload_expired");
     const received = Number(upload.bytesReceived);
@@ -149,12 +198,28 @@ export class MediaService {
     const { upload, asset } = await this.getUpload(uploadId, user.id);
     if (upload.status === "completed") return publicUploadResult(asset);
     if (upload.status !== "open") throw new HttpError(409, "Upload is not open.", "upload_closed");
-    if (Number(upload.bytesReceived) !== Number(upload.declaredBytes)) throw new HttpError(409, "Upload is incomplete.", "incomplete", { bytesReceived: Number(upload.bytesReceived) });
+    const declared = Number(upload.declaredBytes);
+    const r = await this.received(upload);
+    if (r.bytes !== declared) throw new HttpError(409, "Upload is incomplete.", "incomplete", { bytesReceived: r.bytes, partsReceived: r.parts });
     const { size } = await this.ctx.storage.completeResumable(upload.storageUploadRef!);
+    if (size !== declared) {
+      await this.markRejected(asset, upload, `stored size ${size} differs from declared ${declared}`, true);
+      throw new HttpError(500, "Stored file size does not match the declared size.", "size_mismatch");
+    }
+    // Direct mode never saw the bytes: sniff the real type now from the stored object.
+    let detectedMime = asset.detectedMime;
+    if (!detectedMime) {
+      const head = await this.ctx.storage.getObjectRange(asset.storageKey, 0, Math.min(4099, declared - 1));
+      detectedMime = await detectMime(head);
+      if (!isAllowedFor(asset.kind as "video" | "document", detectedMime)) {
+        await this.markRejected(asset, upload, `unsupported content type: ${detectedMime ?? "unknown"}`, true);
+        throw new HttpError(415, "That file type is not accepted.", "unsupported_type", { detected: detectedMime });
+      }
+    }
     const stream = await this.ctx.storage.getObjectStream(asset.storageKey);
     const { sha256, size: hashedSize } = await sha256Stream(stream);
-    if (size !== Number(upload.declaredBytes) || hashedSize !== Number(upload.declaredBytes)) {
-      await this.markRejected(asset, upload, `stored size ${hashedSize} differs from declared ${upload.declaredBytes}`);
+    if (hashedSize !== declared) {
+      await this.markRejected(asset, upload, `hashed size ${hashedSize} differs from declared ${declared}`, true);
       throw new HttpError(500, "Stored file size does not match the declared size.", "size_mismatch");
     }
     const receivedAt = new Date();
@@ -169,9 +234,9 @@ export class MediaService {
     await this.ctx.db.transaction(async (tx) => {
       await tx
         .update(mediaAssets)
-        .set({ status: "complete", sha256, sizeBytes: hashedSize, receivedAt, scanStatus, scanDetail })
+        .set({ status: "complete", sha256, sizeBytes: hashedSize, receivedAt, scanStatus, scanDetail, detectedMime })
         .where(eq(mediaAssets.id, asset.id));
-      await tx.update(uploadSessions).set({ status: "completed", updatedAt: receivedAt }).where(eq(uploadSessions.id, upload.id));
+      await tx.update(uploadSessions).set({ status: "completed", bytesReceived: hashedSize, partsReceived: r.parts, updatedAt: receivedAt }).where(eq(uploadSessions.id, upload.id));
       await this.ctx.audit.record(
         {
           actorType: "witness",
@@ -180,7 +245,7 @@ export class MediaService {
           statementId: asset.statementId,
           mediaAssetId: asset.id,
           action: "media.upload_completed",
-          detail: { kind: asset.kind, sourceType: asset.sourceType, sha256, sizeBytes: hashedSize, detectedMime: asset.detectedMime, receivedAtUtc: receivedAt.toISOString(), storageKey: asset.storageKey, scanStatus, parts: upload.partsReceived },
+          detail: { kind: asset.kind, sourceType: asset.sourceType, sha256, sizeBytes: hashedSize, detectedMime, receivedAtUtc: receivedAt.toISOString(), storageKey: asset.storageKey, scanStatus, parts: r.parts, mode: upload.mode, storage: this.ctx.storage.kind },
           ...this.meta(req),
         },
         tx as unknown as AppContext["db"],
@@ -190,8 +255,9 @@ export class MediaService {
     return publicUploadResult(fresh);
   }
 
-  private async markRejected(asset: MediaRow, upload: UploadRow, reason: string) {
-    await this.ctx.storage.abortResumable(upload.storageUploadRef!).catch(() => {});
+  private async markRejected(asset: MediaRow, upload: UploadRow, reason: string, objectExists = false) {
+    if (objectExists) await this.ctx.storage.deleteObject(asset.storageKey).catch(() => {});
+    else await this.ctx.storage.abortResumable(upload.storageUploadRef!).catch(() => {});
     await this.ctx.db.update(uploadSessions).set({ status: "aborted", updatedAt: new Date() }).where(eq(uploadSessions.id, upload.id));
     await this.ctx.db.update(mediaAssets).set({ status: "rejected", scanDetail: reason }).where(eq(mediaAssets.id, asset.id));
     await this.ctx.audit.record({ actorType: "system", statementId: asset.statementId, mediaAssetId: asset.id, action: "media.rejected", detail: { reason } });

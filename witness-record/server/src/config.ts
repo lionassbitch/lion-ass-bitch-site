@@ -64,6 +64,11 @@ const EnvSchema = z.object({
   MAX_DOCUMENT_BYTES: intFromEnv(25 * 1024 * 1024),
   MAX_DOCUMENTS_PER_STATEMENT: intFromEnv(10),
   UPLOAD_CHUNK_BYTES: intFromEnv(5 * 1024 * 1024),
+  // direct: browser PUTs parts straight to the bucket via presigned URLs (required on hosts with small request-body limits).
+  // proxy: parts travel through this server.
+  UPLOAD_MODE: z.enum(["direct", "proxy"]).default("direct"),
+  // Shared secret for the scheduled retention endpoint (GET /api/cron/retention) when the in-process timer is disabled.
+  CRON_SECRET: z.string().default(""),
 
   SESSION_TTL_HOURS: intFromEnv(12),
   SESSION_IDLE_MINUTES: intFromEnv(60),

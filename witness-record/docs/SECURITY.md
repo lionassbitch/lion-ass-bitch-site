@@ -19,7 +19,7 @@
 | Admin MFA | TOTP (RFC 6238), secrets encrypted at rest with AES-256-GCM, per-step replay protection, enrollment only from an allowlisted session, reset only via server-side script |
 | Input validation | zod schemas for every payload; uploads validated by magic bytes and size before bytes are kept; signature PNGs checked for the PNG header and size |
 | Transport | HTTPS required in production (`BASE_URL`), HSTS, strict CSP (`default-src 'self'`, no inline scripts), `frame-ancestors 'none'`, `Referrer-Policy: no-referrer`, `X-Robots-Tag: noindex` on all app responses, `robots.txt` disallow |
-| Storage | Private bucket; presigned links expire in minutes; `S3_SSE` header; local driver uses HMAC-signed expiring links |
+| Storage | Private bucket; presigned download links expire in minutes; in direct-upload mode each part is written through a presigned URL valid for 15 minutes, and the server re-reads the stored object to hash and type-check it before accepting it; `S3_SSE` header; local driver uses HMAC-signed expiring links |
 | Rate limiting | Global 600/min per IP; stricter on sign-in, invite opening, signing, link issuance, exports |
 | Integrity | SHA-256 of every stored file computed from the stored bytes at receipt; canonical-JSON SHA-256 of the frozen signed record; PDF SHA-256; hash-chained audit log; DB triggers forbid UPDATE/DELETE on finalized evidence |
 | Logging | pino with cookie/authorization redaction; no request bodies logged; witness content never logged |

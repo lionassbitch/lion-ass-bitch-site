@@ -183,6 +183,7 @@ export const uploadSessions = pgTable("upload_sessions", {
   partsReceived: integer("parts_received").notNull().default(0),
   chunkBytes: integer("chunk_bytes").notNull(),
   status: text("status").notNull().default("open"), // open | completed | aborted | failed
+  mode: text("mode").notNull().default("proxy"), // proxy | direct
   createdAt: timestamp("created_at", { withTimezone: true }).notNull().defaultNow(),
   updatedAt: timestamp("updated_at", { withTimezone: true }).notNull().defaultNow(),
   expiresAt: timestamp("expires_at", { withTimezone: true }).notNull(),

@@ -19,7 +19,7 @@ This is legal-evidence software, not a petition and not a marketing database.
 | --- | --- | --- |
 | Sign in with Google / Microsoft (OpenID Connect, PKCE, state + nonce, server sessions) | Implemented | `tests/integration/*` run the real authorization-code flow against an in-process OIDC provider; real Google/Microsoft logins must be exercised once in your deployment (readiness page tracks this) |
 | Privacy consent, witness profile, 11 neutral questions (EN/ES) | Implemented | integration + browser tests |
-| In-browser video recording, file upload, resumable chunked uploads, retake | Implemented | browser test records with Chromium's camera and uploads; integration tests cover resume after interruption |
+| In-browser video recording, file upload, resumable uploads (direct-to-bucket presigned parts, or server-proxied), retake | Implemented | browser test records with Chromium's camera and uploads through presigned part URLs; integration tests cover resume after interruption in both transports |
 | Original-bytes preservation, SHA-256 at receipt, UTC receipt time, magic-byte type validation | Implemented | integration tests compare stored bytes and hashes |
 | Review → explicit "Sign and Submit Affirmation" (drawn or typed signature) under CPLR § 2106 | Implemented | integration + browser tests; statute text pinned by `tests/unit/statute.test.ts` |
 | Frozen signed record + canonical SHA-256, generated PDF + SHA-256, receipt | Implemented | PDF text and hashes asserted in tests |
@@ -69,6 +69,7 @@ cannot be automated (real provider logins, physical phones).
 - `docs/OAUTH.md` — Google and Microsoft app registration, redirect URIs, scopes
 - `docs/SECURITY.md` — threat model, controls, what is and is not claimed
 - `docs/RETENTION.md` — retention policy, legal hold, privacy/correction request handling, deletion procedure
+- `docs/VERCEL.md` — hosting the container on Vercel, with the limits it works around
 - `docs/SUPABASE.md` — the provisioned Supabase project (database + private bucket) and the values to paste into the host
 - `docs/DEPLOYMENT.md` — domains, TLS, Docker, backups, secret management, publishing, record export
 - `docs/TESTING.md` — automated suites and manual acceptance checklist

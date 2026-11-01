@@ -93,6 +93,9 @@ export async function buildApp(ctx: AppContext): Promise<FastifyInstance> {
     const url = req.raw.url ?? "";
     if (!url.startsWith("/api/")) return;
     if (["GET", "HEAD", "OPTIONS"].includes(req.method)) return;
+    // Signed, single-use-style upload-part links carry their own credential (the
+    // HMAC token) and no cookie is consulted, exactly like a presigned bucket URL.
+    if (url.startsWith("/api/files/part/")) return;
     const origin = req.headers.origin ?? (req.headers.referer ? safeOrigin(req.headers.referer) : null);
     if (!origin || origin !== ctx.cfg.baseUrl.origin) throw new HttpError(403, "Cross-site request rejected.", "csrf_origin");
     if (req.headers["x-requested-with"] !== "XMLHttpRequest") throw new HttpError(403, "Missing request header.", "csrf_header");

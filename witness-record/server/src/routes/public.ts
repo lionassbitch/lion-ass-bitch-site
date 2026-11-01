@@ -7,6 +7,9 @@ import { hashToken, signPayload, verifyPayload } from "../lib/crypto.js";
 import { PRIVACY_NOTICE_VERSION } from "../i18n/index.js";
 import { cookieOptions } from "../auth/session.js";
 import { CPLR_2106_FULL_TEXT, CPLR_2106_SOURCE_URL, CPLR_2106_RETRIEVED_ON } from "../statute/cplr2106.js";
+import { LocalStorageDriver } from "../storage/local.js";
+import { purgeExpiredDrafts } from "../services/retention.js";
+import { timingSafeEqualStr } from "../lib/crypto.js";
 
 export const INVITE_COOKIE = "wr_invite";
 
@@ -57,6 +60,32 @@ export async function registerPublicRoutes(app: FastifyInstance, ctx: AppContext
     reply.setCookie(INVITE_COOKIE, cookie, { ...cookieOptions(ctx), maxAge: 30 * 24 * 3600 });
     await ctx.audit.record({ actorType: "anonymous", action: "invite.opened", detail: { inviteId: row.id, label: row.label }, ipAddress: ctx.cfg.env.COLLECT_IP_ADDRESS ? req.ip : null });
     return { ok: true };
+  });
+
+  // Local storage driver, direct-upload mode: the browser PUTs each part to a
+  // signed URL. (With S3 the presigned URL points at the bucket instead.)
+  app.put<{ Params: { token: string } }>("/api/files/part/:token", { config: { rateLimit: { max: 1200, timeWindow: "1 minute" } } }, async (req) => {
+    if (!(ctx.storage instanceof LocalStorageDriver)) throw new HttpError(404, "Not found.", "not_found");
+    const payload = ctx.storage.verifyPartToken(req.params.token);
+    if (!payload) throw new HttpError(403, "This upload link has expired.", "link_expired");
+    if (!Buffer.isBuffer(req.body) || req.body.length === 0) throw new HttpError(400, "Send the part as application/octet-stream.", "bad_part");
+    try {
+      await ctx.storage.writePart(payload.staging, payload.part, req.body);
+    } catch (err) {
+      throw new HttpError(409, String((err as Error).message), "part_mismatch");
+    }
+    return { ok: true, part: payload.part, size: req.body.length };
+  });
+
+  // Scheduled retention (for hosts that scale to zero, where the in-process
+  // timer cannot be relied on). Vercel Cron sends `Authorization: Bearer CRON_SECRET`.
+  app.get("/api/cron/retention", { config: { rateLimit: { max: 10, timeWindow: "1 minute" } } }, async (req) => {
+    const secret = ctx.cfg.env.CRON_SECRET;
+    const header = req.headers.authorization ?? "";
+    if (!secret || !header.startsWith("Bearer ") || !timingSafeEqualStr(header.slice(7), secret)) throw new HttpError(401, "Unauthorized.", "unauthorized");
+    const result = await purgeExpiredDrafts(ctx);
+    await ctx.audit.record({ actorType: "system", action: "retention.scheduled_run", detail: result });
+    return { ok: true, ...result };
   });
 
   // Local storage driver: short-lived signed download links are served here.

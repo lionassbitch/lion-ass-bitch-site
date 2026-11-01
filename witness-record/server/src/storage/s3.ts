@@ -6,13 +6,14 @@ import {
   DeleteObjectCommand,
   CreateMultipartUploadCommand,
   UploadPartCommand,
+  ListPartsCommand,
   CompleteMultipartUploadCommand,
   AbortMultipartUploadCommand,
   HeadBucketCommand,
 } from "@aws-sdk/client-s3";
 import { getSignedUrl } from "@aws-sdk/s3-request-presigner";
 import type { Readable } from "node:stream";
-import type { DownloadUrlOptions, StorageDriver } from "./types.js";
+import type { DownloadUrlOptions, StorageDriver, StoredPart } from "./types.js";
 
 interface S3Ref {
   key: string;
@@ -31,12 +32,16 @@ export interface S3Options {
 }
 
 /**
- * S3-compatible driver (AWS S3, Cloudflare R2, Backblaze B2, MinIO…).
- * Uploads use native multipart uploads so interrupted witness uploads resume.
- * Download links are presigned GET URLs that expire after a few minutes.
+ * S3-compatible driver (AWS S3, Cloudflare R2, Supabase Storage, Backblaze B2,
+ * MinIO…). Uploads use native multipart uploads: either appended by the server
+ * (proxy mode) or PUT by the browser to presigned part URLs (direct mode, which
+ * keeps large files off hosts with small request-body limits). Parts are read
+ * back from the storage service with ListParts before completion, so storage
+ * is the source of truth. Download links are presigned GET URLs that expire.
  */
 export class S3StorageDriver implements StorageDriver {
   readonly kind = "s3" as const;
+  readonly configured = true;
   readonly description: string;
   readonly encryptionAtRest: string;
   private readonly client: S3Client;
@@ -49,7 +54,7 @@ export class S3StorageDriver implements StorageDriver {
       credentials: { accessKeyId: opts.accessKeyId, secretAccessKey: opts.secretAccessKey },
     });
     this.description = `S3-compatible bucket "${opts.bucket}"${opts.endpoint ? ` at ${opts.endpoint}` : ` (${opts.region})`}`;
-    this.encryptionAtRest = opts.sse ? `Server-side encryption requested on upload (${opts.sse}); bucket policy should also enforce it.` : "No SSE header sent; rely on bucket default encryption.";
+    this.encryptionAtRest = opts.sse ? `Server-side encryption requested on upload (${opts.sse}); bucket policy should also enforce it.` : "No SSE header sent; rely on the storage provider's default encryption at rest.";
   }
 
   private sse(): { ServerSideEncryption?: "AES256" | "aws:kms" } {
@@ -69,8 +74,12 @@ export class S3StorageDriver implements StorageDriver {
 
   async getObjectBuffer(key: string): Promise<Buffer> {
     const res = await this.client.send(new GetObjectCommand({ Bucket: this.opts.bucket, Key: key }));
-    const bytes = await res.Body!.transformToByteArray();
-    return Buffer.from(bytes);
+    return Buffer.from(await res.Body!.transformToByteArray());
+  }
+
+  async getObjectRange(key: string, start: number, end: number): Promise<Buffer> {
+    const res = await this.client.send(new GetObjectCommand({ Bucket: this.opts.bucket, Key: key, Range: `bytes=${start}-${end}` }));
+    return Buffer.from(await res.Body!.transformToByteArray());
   }
 
   async headObject(key: string): Promise<{ size: number } | null> {
@@ -78,7 +87,8 @@ export class S3StorageDriver implements StorageDriver {
       const res = await this.client.send(new HeadObjectCommand({ Bucket: this.opts.bucket, Key: key }));
       return { size: res.ContentLength ?? 0 };
     } catch (err) {
-      if ((err as { name?: string }).name === "NotFound") return null;
+      const e = err as { name?: string; $metadata?: { httpStatusCode?: number } };
+      if (e.name === "NotFound" || e.$metadata?.httpStatusCode === 404) return null;
       throw err;
     }
   }
@@ -88,9 +98,7 @@ export class S3StorageDriver implements StorageDriver {
   }
 
   async beginResumable(key: string, contentType: string): Promise<string> {
-    const res = await this.client.send(
-      new CreateMultipartUploadCommand({ Bucket: this.opts.bucket, Key: key, ContentType: contentType, ...this.sse() }),
-    );
+    const res = await this.client.send(new CreateMultipartUploadCommand({ Bucket: this.opts.bucket, Key: key, ContentType: contentType, ...this.sse() }));
     const ref: S3Ref = { key, uploadId: res.UploadId!, parts: [] };
     return JSON.stringify(ref);
   }
@@ -98,23 +106,35 @@ export class S3StorageDriver implements StorageDriver {
   async appendPart(refStr: string, partNumber: number, body: Buffer): Promise<string> {
     const ref = JSON.parse(refStr) as S3Ref;
     if (partNumber !== ref.parts.length + 1) throw new Error(`expected part ${ref.parts.length + 1}, got ${partNumber}`);
-    const res = await this.client.send(
-      new UploadPartCommand({ Bucket: this.opts.bucket, Key: ref.key, UploadId: ref.uploadId, PartNumber: partNumber, Body: body }),
-    );
+    const res = await this.client.send(new UploadPartCommand({ Bucket: this.opts.bucket, Key: ref.key, UploadId: ref.uploadId, PartNumber: partNumber, Body: body }));
     ref.parts.push({ PartNumber: partNumber, ETag: res.ETag! });
     return JSON.stringify(ref);
   }
 
+  async presignPartUrl(refStr: string, partNumber: number, ttlSeconds: number): Promise<string> {
+    const ref = JSON.parse(refStr) as S3Ref;
+    const cmd = new UploadPartCommand({ Bucket: this.opts.bucket, Key: ref.key, UploadId: ref.uploadId, PartNumber: partNumber });
+    return getSignedUrl(this.client, cmd, { expiresIn: ttlSeconds });
+  }
+
+  async listParts(refStr: string): Promise<StoredPart[]> {
+    const ref = JSON.parse(refStr) as S3Ref;
+    const out: StoredPart[] = [];
+    let marker: number | undefined;
+    for (;;) {
+      const res = await this.client.send(new ListPartsCommand({ Bucket: this.opts.bucket, Key: ref.key, UploadId: ref.uploadId, MaxParts: 1000, PartNumberMarker: marker !== undefined ? String(marker) : undefined }));
+      for (const p of res.Parts ?? []) out.push({ partNumber: p.PartNumber!, size: p.Size ?? 0, etag: p.ETag ?? null });
+      if (!res.IsTruncated) break;
+      marker = Number(res.NextPartNumberMarker);
+    }
+    return out.sort((a, b) => a.partNumber - b.partNumber);
+  }
+
   async completeResumable(refStr: string): Promise<{ size: number }> {
     const ref = JSON.parse(refStr) as S3Ref;
-    await this.client.send(
-      new CompleteMultipartUploadCommand({
-        Bucket: this.opts.bucket,
-        Key: ref.key,
-        UploadId: ref.uploadId,
-        MultipartUpload: { Parts: ref.parts },
-      }),
-    );
+    const listed = await this.listParts(refStr);
+    const parts = listed.length ? listed.map((p) => ({ PartNumber: p.partNumber, ETag: p.etag ?? undefined })) : ref.parts;
+    await this.client.send(new CompleteMultipartUploadCommand({ Bucket: this.opts.bucket, Key: ref.key, UploadId: ref.uploadId, MultipartUpload: { Parts: parts } }));
     const head = await this.headObject(ref.key);
     return { size: head?.size ?? 0 };
   }
@@ -126,12 +146,7 @@ export class S3StorageDriver implements StorageDriver {
 
   async createDownloadUrl(key: string, opts: DownloadUrlOptions): Promise<string> {
     const safeName = opts.filename.replace(/["\r\n]/g, "_");
-    const cmd = new GetObjectCommand({
-      Bucket: this.opts.bucket,
-      Key: key,
-      ResponseContentType: opts.contentType,
-      ResponseContentDisposition: `${opts.disposition}; filename="${safeName}"`,
-    });
+    const cmd = new GetObjectCommand({ Bucket: this.opts.bucket, Key: key, ResponseContentType: opts.contentType, ResponseContentDisposition: `${opts.disposition}; filename="${safeName}"` });
     return getSignedUrl(this.client, cmd, { expiresIn: opts.ttlSeconds });
   }
 

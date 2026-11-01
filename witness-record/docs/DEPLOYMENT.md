@@ -6,6 +6,8 @@ needs a stable public HTTPS origin. It is not a serverless/static site.
 
 ## Options
 
+- **Vercel container runtime** (what this case uses): see `docs/VERCEL.md`.
+
 - **Container** (recommended): `Dockerfile` builds a minimal non-root image.
   Run it on Fly.io, Render, Railway, AWS ECS/App Runner, Google Cloud Run, or a VM.
 - **Reference compose stack**: `docker-compose.yml` wires the app, PostgreSQL 16,
