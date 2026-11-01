@@ -69,6 +69,7 @@ cannot be automated (real provider logins, physical phones).
 - `docs/OAUTH.md` — Google and Microsoft app registration, redirect URIs, scopes
 - `docs/SECURITY.md` — threat model, controls, what is and is not claimed
 - `docs/RETENTION.md` — retention policy, legal hold, privacy/correction request handling, deletion procedure
+- `docs/SUPABASE.md` — the provisioned Supabase project (database + private bucket) and the values to paste into the host
 - `docs/DEPLOYMENT.md` — domains, TLS, Docker, backups, secret management, publishing, record export
 - `docs/TESTING.md` — automated suites and manual acceptance checklist
 

@@ -26,6 +26,8 @@ const EnvSchema = z.object({
 
   DATABASE_URL: z.string().default(""),
   DATABASE_SSL: z.string().default(""),
+  // Optional PEM certificate authority used to verify the database server (e.g. Supabase CA).
+  DATABASE_SSL_CA: z.string().default(""),
 
   SESSION_SECRET: z.string().default(""),
   APP_ENCRYPTION_KEY: z.string().default(""),

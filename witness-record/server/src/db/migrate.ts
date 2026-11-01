@@ -50,7 +50,7 @@ const isDirectRun = process.argv[1] && path.resolve(process.argv[1]) === fileURL
 if (isDirectRun) {
   const { loadConfig } = await import("../config.js");
   const cfg = loadConfig();
-  const handle = await createDb(cfg.env.DATABASE_URL, { ssl: cfg.env.DATABASE_SSL, isProd: cfg.isProd });
+  const handle = await createDb(cfg.env.DATABASE_URL, { ssl: cfg.env.DATABASE_SSL, sslCa: cfg.env.DATABASE_SSL_CA, isProd: cfg.isProd });
   const done = await runMigrations(handle, (m) => console.log(m));
   console.log(done.length ? `applied: ${done.join(", ")}` : "database is up to date");
   await handle.close();

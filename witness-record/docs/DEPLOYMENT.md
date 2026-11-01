@@ -24,6 +24,8 @@ needs a stable public HTTPS origin. It is not a serverless/static site.
 
 ## Database
 
+A Supabase project is already provisioned for this case; see `docs/SUPABASE.md` for its values.
+
 Use managed PostgreSQL (RDS, Cloud SQL, Neon, Supabase, Fly Postgres…) with
 TLS (`DATABASE_SSL=require`), automated snapshots and point-in-time recovery.
 Give the app a role that owns the schema but is not a superuser; keep superuser

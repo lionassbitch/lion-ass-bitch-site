@@ -20,7 +20,7 @@ export interface DbHandle {
  * pglite://memory runs an embedded PostgreSQL (same SQL, same triggers). The
  * embedded engine is refused when NODE_ENV=production.
  */
-export async function createDb(databaseUrl: string, opts: { ssl?: string; isProd?: boolean } = {}): Promise<DbHandle> {
+export async function createDb(databaseUrl: string, opts: { ssl?: string; sslCa?: string; isProd?: boolean } = {}): Promise<DbHandle> {
   if (!databaseUrl) throw new Error("DATABASE_URL is not set.");
   if (databaseUrl.startsWith("pglite://")) {
     if (opts.isProd) throw new Error("The embedded pglite database is not permitted in production.");
@@ -46,7 +46,8 @@ export async function createDb(databaseUrl: string, opts: { ssl?: string; isProd
       close: () => client.close(),
     };
   }
-  const ssl = opts.ssl === "require" ? { rejectUnauthorized: true } : opts.ssl === "no-verify" ? { rejectUnauthorized: false } : undefined;
+  const ca = opts.sslCa ? opts.sslCa.replace(/\\n/g, "\n") : undefined;
+  const ssl = opts.ssl === "require" ? { rejectUnauthorized: true, ca } : opts.ssl === "no-verify" ? { rejectUnauthorized: false } : undefined;
   const pool = new pg.Pool({ connectionString: databaseUrl, ssl, max: 10 });
   const db = drizzlePg(pool, { schema });
   return {

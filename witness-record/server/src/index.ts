@@ -15,7 +15,7 @@ export async function createContext(env: NodeJS.ProcessEnv = process.env): Promi
   const cfg = loadConfig(env);
   const log = pino({ level: cfg.env.LOG_LEVEL, redact: { paths: ["req.headers.cookie", "req.headers.authorization", "res.headers['set-cookie']"], censor: "[redacted]" } });
   for (const w of cfg.warnings) log.warn(w);
-  const dbHandle = await createDb(cfg.env.DATABASE_URL, { ssl: cfg.env.DATABASE_SSL, isProd: cfg.isProd });
+  const dbHandle = await createDb(cfg.env.DATABASE_URL, { ssl: cfg.env.DATABASE_SSL, sslCa: cfg.env.DATABASE_SSL_CA, isProd: cfg.isProd });
   const applied = await runMigrations(dbHandle, (m) => log.info(m));
   if (applied.length) log.info({ applied }, "migrations applied");
   const storage = createStorage(cfg);
