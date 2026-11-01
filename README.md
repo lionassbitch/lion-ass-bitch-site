@@ -9,6 +9,14 @@ Nitro/Cloudflare), React 19, and Tailwind-tokened CSS. Commerce is powered by
 the live Shopify storefront JSON with a committed catalog snapshot as a
 resilient fallback.
 
+## THE WITNESS RECORD (separate application)
+
+`witness-record/` contains a standalone, self-contained web application: a
+private witness-affirmation platform (Fastify + PostgreSQL + S3 + React) for
+collecting authenticated, signed witness statements with original video and a
+tamper-evident audit trail. It has its own `package.json`, tests and docs; see
+`witness-record/README.md`. It is not part of the site build.
+
 ## Prerequisites
 
 - Node.js `>=22.13.0` (the test suite uses Node's built-in TypeScript type
