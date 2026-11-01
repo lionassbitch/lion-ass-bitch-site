@@ -4,6 +4,11 @@ A Bronx-born mythological institution built as a premium, deployable web
 platform: fashion house, relic archive, cinematic universe, and private academy
 unified into one coherent system.
 
+The public homepage (`/`) is the scroll brand site in `app/lab`. The previous
+editorial front gate is still available at `/editorial`. Shop, archive,
+Voguejitsu, mythos, and the rest of the institution routes are unchanged.
+This site lives in `lionassbitch/lion-ass-bitch-site`, not in Blueprint Chat.
+
 Built on [vinext](https://github.com/cloudflare/vinext) (Next.js App Router →
 Nitro/Cloudflare), React 19, and Tailwind-tokened CSS. Commerce is powered by
 the live Shopify storefront JSON with a committed catalog snapshot as a
